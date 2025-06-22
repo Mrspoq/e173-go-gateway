@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script> {{/* Consider serving locally */}}
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        h1 { color: #0056b3; }
+        button { 
+            background-color: #007bff; color: white; padding: 10px 15px; 
+            border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;
+        }
+        button:hover { background-color: #0056b3; }
+        .container { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px;}
+        #modem-status-dynamic p { margin: 5px 0; }
+        #modem-status-dynamic small { color: #777; font-size: 0.8em;}
+    </style>
+</head>
+<body>
+    <h1>{{ .title }}</h1>
+
+    <div class="container">
+        <h2>Modem Status</h2>
+        <div id="modem-status-dynamic">
+            <button hx-get="/api/modems/status" hx-target="#modem-status-dynamic" hx-swap="innerHTML">
+                Load Modem Status
+            </button>
+            <p>Click button to load initial modem status.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Call Controls (Placeholder)</h2>
+        <p>Call origination and active call list will go here.</p>
+    </div>
+
+    <div class="container">
+        <h2>System Log (Placeholder)</h2>
+        <p>Real-time system events might be displayed here.</p>
+    </div>
+
+</body>
+</html>

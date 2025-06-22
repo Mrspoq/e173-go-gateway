@@ -1,0 +1,21 @@
+{
+  "name": "e173_go_gateway",
+  "version": "1.0.0",
+  "description": "## 1. Project Overview",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "tailwindcss -i ./assets/css/input.css -o ./web/static/bundle.css --minify",
+    "watch-css": "tailwindcss -i ./assets/css/input.css -o ./web/static/bundle.css --watch",
+    "ui-dev": "npm run watch-css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.10",
+    "autoprefixer": "^10.4.21",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.10"
+  }
+}

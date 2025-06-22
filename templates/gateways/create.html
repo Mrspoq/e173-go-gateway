@@ -1,0 +1,115 @@
+{{template "base" .}}
+
+{{define "title"}}Create Gateway{{end}}
+
+{{define "content"}}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                Create New Gateway
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                Add a new E173 gateway node to your network
+            </p>
+        </div>
+        
+        <form id="create-gateway-form" class="border-t border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-5 sm:p-6 space-y-6">
+                <!-- Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Gateway Name
+                    </label>
+                    <input type="text" name="name" id="name" required
+                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                           placeholder="e.g., Gateway-01">
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Location
+                    </label>
+                    <input type="text" name="location" id="location" required
+                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                           placeholder="e.g., Data Center 1, Rack A">
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Notes
+                    </label>
+                    <textarea name="notes" id="notes" rows="3"
+                              class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                              placeholder="Optional notes about this gateway"></textarea>
+                </div>
+            </div>
+
+            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-900 text-right sm:px-6 space-x-3">
+                <a href="/gateways" 
+                   class="inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Create Gateway
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="message-container" class="mt-4"></div>
+</div>
+
+<script>
+document.getElementById('create-gateway-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        location: document.getElementById('location').value,
+        notes: document.getElementById('notes').value
+    };
+    
+    fetch('/api/v1/gateways', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Show success message
+        document.getElementById('message-container').innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">Gateway created successfully. API Key: <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">${data.api_key}</code></span>
+                <p class="mt-2 text-sm">Save this API key securely. It will be needed to configure the gateway node.</p>
+            </div>
+        `;
+        
+        // Redirect after 5 seconds
+        setTimeout(() => {
+            window.location.href = '/gateways';
+        }, 5000);
+    })
+    .catch(error => {
+        document.getElementById('message-container').innerHTML = `
+            <div class="bg-red-50 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">${error.error || 'Failed to create gateway'}</span>
+            </div>
+        `;
+    });
+});
+</script>
+{{end}}

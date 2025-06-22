@@ -1,0 +1,179 @@
+{{template "base" .}}
+
+{{define "title"}}Edit Gateway{{end}}
+
+{{define "content"}}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                Edit Gateway
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                Update gateway information
+            </p>
+        </div>
+        
+        <form id="edit-gateway-form" class="border-t border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-5 sm:p-6 space-y-6">
+                <!-- Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Gateway Name
+                    </label>
+                    <input type="text" name="name" id="name" value="{{.Gateway.Name}}" required
+                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Location
+                    </label>
+                    <input type="text" name="location" id="location" value="{{.Gateway.Location}}" required
+                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Notes
+                    </label>
+                    <textarea name="notes" id="notes" rows="3"
+                              class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md">{{.Gateway.Notes}}</textarea>
+                </div>
+
+                <!-- Gateway Info (Read-only) -->
+                <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 rounded-lg space-y-2">
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">Gateway Information</h4>
+                    <dl class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                        <div>
+                            <dt class="inline font-medium">Gateway ID:</dt>
+                            <dd class="inline ml-1">{{.Gateway.ID}}</dd>
+                        </div>
+                        <div>
+                            <dt class="inline font-medium">Status:</dt>
+                            <dd class="inline ml-1">
+                                {{if eq .Gateway.Status "online"}}
+                                <span class="text-green-600 dark:text-green-400">Online</span>
+                                {{else}}
+                                <span class="text-red-600 dark:text-red-400">Offline</span>
+                                {{end}}
+                            </dd>
+                        </div>
+                        {{if .Gateway.LastSeenAt}}
+                        <div>
+                            <dt class="inline font-medium">Last Seen:</dt>
+                            <dd class="inline ml-1">{{.Gateway.LastSeenAt.Format "2006-01-02 15:04:05"}}</dd>
+                        </div>
+                        {{end}}
+                        {{if .Gateway.IPAddress}}
+                        <div>
+                            <dt class="inline font-medium">IP Address:</dt>
+                            <dd class="inline ml-1">{{.Gateway.IPAddress}}</dd>
+                        </div>
+                        {{end}}
+                        <div>
+                            <dt class="inline font-medium">Created:</dt>
+                            <dd class="inline ml-1">{{.Gateway.CreatedAt.Format "2006-01-02 15:04:05"}}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- API Key Section -->
+                <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 px-4 py-3 rounded-lg">
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">API Key</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        This API key is used by the gateway to authenticate with the server.
+                    </p>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" readonly value="{{.Gateway.APIKey}}" 
+                               class="flex-1 text-sm font-mono bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1">
+                        <button type="button" onclick="copyAPIKey()" 
+                                class="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-900 text-right sm:px-6 space-x-3">
+                <a href="/gateways" 
+                   class="inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="message-container" class="mt-4"></div>
+</div>
+
+<script>
+const gatewayId = '{{.Gateway.ID}}';
+
+document.getElementById('edit-gateway-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        location: document.getElementById('location').value,
+        notes: document.getElementById('notes').value
+    };
+    
+    fetch(`/api/v1/gateways/${gatewayId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Show success message
+        document.getElementById('message-container').innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">Gateway updated successfully.</span>
+            </div>
+        `;
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+            window.location.href = '/gateways';
+        }, 2000);
+    })
+    .catch(error => {
+        document.getElementById('message-container').innerHTML = `
+            <div class="bg-red-50 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">${error.error || 'Failed to update gateway'}</span>
+            </div>
+        `;
+    });
+});
+
+function copyAPIKey() {
+    const apiKey = '{{.Gateway.APIKey}}';
+    navigator.clipboard.writeText(apiKey).then(() => {
+        // Show temporary success message
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 2000);
+    });
+}
+</script>
+{{end}}

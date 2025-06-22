@@ -1,0 +1,177 @@
+{{template "base" .}}
+
+{{define "body"}}
+<!-- Customer Management Header -->
+<div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="flex-1 min-w-0">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
+            Customer Management
+        </h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Manage your VoIP customers, billing, and account status
+        </p>
+    </div>
+    <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+        <button type="button" 
+                hx-get="/api/customers" 
+                hx-target="#customer-list" 
+                hx-swap="innerHTML"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Refresh
+        </button>
+        <button type="button" 
+                hx-get="/customers/create" 
+                hx-target="#main-content" 
+                hx-swap="innerHTML"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add Customer
+        </button>
+    </div>
+</div>
+
+<!-- Customer Stats Cards -->
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <!-- Total Customers -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Customers</dt>
+                    <dd class="flex items-baseline">
+                        <div id="total-customers" 
+                             hx-get="/api/customers/stats" 
+                             hx-trigger="load, every 30s"
+                             hx-select="[data-stat='total']"
+                             class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            Loading...
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Customers -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Active</dt>
+                    <dd class="flex items-baseline">
+                        <div id="active-customers" 
+                             hx-get="/api/customers/stats" 
+                             hx-trigger="load, every 30s"
+                             hx-select="[data-stat='active']"
+                             class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            Loading...
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Balance -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-amber-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Low Balance</dt>
+                    <dd class="flex items-baseline">
+                        <div id="low-balance-customers" 
+                             hx-get="/api/customers/stats" 
+                             hx-trigger="load, every 30s"
+                             hx-select="[data-stat='low_balance']"
+                             class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            Loading...
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Revenue -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Monthly Revenue</dt>
+                    <dd class="flex items-baseline">
+                        <div id="monthly-revenue" 
+                             hx-get="/api/customers/stats" 
+                             hx-trigger="load, every 30s"
+                             hx-select="[data-stat='revenue']"
+                             class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            Loading...
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer List Table -->
+<div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+            Customer List
+        </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+            Manage customer accounts, balances, and status
+        </p>
+    </div>
+    <div id="customer-list" 
+         hx-get="/api/customers" 
+         hx-trigger="load, every 60s"
+         hx-indicator="#loading-indicator">
+        <!-- Customer list will be loaded here -->
+        <div id="loading-indicator" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <span class="ml-2 text-gray-500 dark:text-gray-400">Loading customers...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Customer List Template (populated by HTMX) -->
+<template id="customer-row-template">
+    <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+        <!-- Customer rows will be rendered here -->
+    </ul>
+</template>
+{{end}}

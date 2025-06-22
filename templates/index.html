@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - E173 Gateway</title>
+    <link href="/static/bundle.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    
+    <nav class="bg-white dark:bg-gray-800 shadow mb-8 nav-desktop">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">E173 Gateway</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500 dark:text-gray-400" id="last-update">
+                        Live Dashboard • Auto-refresh every 5s
+                    </span>
+                    <div class="animate-pulse htmx-indicator">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-6 dashboard-container">
+        
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Real-Time Dashboard</h2>
+            <p class="text-gray-600 dark:text-gray-300">Live monitoring and control for E173 gateway modems</p>
+        </div>
+
+        <!-- Stats Cards Grid - Better desktop layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" 
+             hx-get="/api/stats/cards" 
+             hx-trigger="load, every 5s" 
+             hx-swap="innerHTML">
+            <!-- Loading placeholder -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse stats-card-desktop">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    <div class="ml-5 flex-1">
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 mb-2"></div>
+                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse stats-card-desktop">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    <div class="ml-5 flex-1">
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 mb-2"></div>
+                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse stats-card-desktop">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    <div class="ml-5 flex-1">
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 mb-2"></div>
+                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse stats-card-desktop">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    <div class="ml-5 flex-1">
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 mb-2"></div>
+                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid - Better desktop layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Live Modem Status Panel -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Live Modem Status</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Real-time modem monitoring</p>
+                    </div>
+                    <div class="animate-pulse htmx-indicator">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4" 
+                     hx-get="/api/modems/status" 
+                     hx-trigger="load, every 5s" 
+                     hx-swap="innerHTML">
+                    <!-- Loading placeholder -->
+                    <div class="space-y-4">
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="h-5 bg-gray-200 dark:bg-gray-600 rounded w-24 mb-2"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-1"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="h-6 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-1"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="h-5 bg-gray-200 dark:bg-gray-600 rounded w-24 mb-2"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-1"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="h-6 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-1"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Call Activity Panel -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Call Activity</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Live CDR ticker</p>
+                    </div>
+                    <div class="animate-pulse htmx-indicator">
+                        <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="max-h-96 overflow-y-auto">
+                    <div class="space-y-3" 
+                         hx-get="/api/cdr/recent/list" 
+                         hx-trigger="load, every 3s" 
+                         hx-swap="innerHTML">
+                        <!-- Loading placeholder -->
+                        <div class="space-y-3">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3 flex-1">
+                                        <div class="w-16 h-6 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
+                                        <div class="flex-1">
+                                            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-40 mb-1"></div>
+                                            <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-24"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-1"></div>
+                                        <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3 flex-1">
+                                        <div class="w-16 h-6 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
+                                        <div class="flex-1">
+                                            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-40 mb-1"></div>
+                                            <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-24"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-1"></div>
+                                        <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Controls Section -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">System Controls</h3>
+            <div class="flex flex-wrap gap-4">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                    Test API Connection
+                </button>
+                <button class="bg-gray-500 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                    Force Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update timestamp
+        setInterval(function() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('last-update').textContent = `Last update: ${timeString} • Auto-refresh active`;
+        }, 1000);
+    </script>
+</body>
+</html>

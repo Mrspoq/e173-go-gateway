@@ -1,0 +1,327 @@
+{{template "base" .}}
+
+{{define "body"}}
+<!-- Customer Edit Header -->
+<div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="flex-1 min-w-0">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
+            Edit Customer: {{.customer.company_name}}
+        </h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Update customer information and settings
+        </p>
+    </div>
+    <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+        <button type="button" 
+                hx-get="/customers/{{.customer.id}}/balance" 
+                hx-target="#main-content" 
+                hx-swap="innerHTML"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+            Manage Balance
+        </button>
+        <button type="button" 
+                hx-get="/customers" 
+                hx-target="#main-content" 
+                hx-swap="innerHTML"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Customers
+        </button>
+    </div>
+</div>
+
+<!-- Customer Status Cards -->
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <!-- Current Balance -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Current Balance</dt>
+                    <dd class="flex items-baseline">
+                        <div id="current-balance" 
+                             hx-get="/api/customers/{{.customer.id}}/balance" 
+                             hx-trigger="load, every 30s"
+                             class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            ${{printf "%.2f" .customer.balance}}
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Status -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-{{if .customer.is_active}}green{{else}}red{{end}}-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-{{if .customer.is_active}}green{{else}}red{{end}}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {{if .customer.is_active}}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        {{else}}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        {{end}}
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Status</dt>
+                    <dd class="flex items-baseline">
+                        <div class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            {{if .customer.is_active}}Active{{else}}Suspended{{end}}
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Calls -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Calls</dt>
+                    <dd class="flex items-baseline">
+                        <div class="text-2xl font-semibold text-gray-900 dark:text-white">
+                            {{.customer.total_calls}}
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Last Call -->
+    <div class="dashboard-card">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Last Call</dt>
+                    <dd class="flex items-baseline">
+                        <div class="text-sm font-semibold text-gray-900 dark:text-white">
+                            {{if .customer.last_call_time}}{{.customer.last_call_time}}{{else}}Never{{end}}
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Edit Form -->
+<div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <form id="customer-edit-form" 
+              hx-put="/api/customers/{{.customer.id}}" 
+              hx-target="#form-result" 
+              hx-swap="innerHTML"
+              hx-indicator="#form-loading">
+            
+            <!-- Basic Information -->
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Basic Information</h3>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <!-- Company Name -->
+                    <div>
+                        <label for="company_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Company Name *
+                        </label>
+                        <input type="text" 
+                               name="company_name" 
+                               id="company_name" 
+                               required
+                               value="{{.customer.company_name}}"
+                               class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- Contact Person -->
+                    <div>
+                        <label for="contact_person" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Contact Person *
+                        </label>
+                        <input type="text" 
+                               name="contact_person" 
+                               id="contact_person" 
+                               required
+                               value="{{.customer.contact_person}}"
+                               class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Email Address *
+                        </label>
+                        <input type="email" 
+                               name="email" 
+                               id="email" 
+                               required
+                               value="{{.customer.email}}"
+                               class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Phone Number
+                        </label>
+                        <input type="tel" 
+                               name="phone" 
+                               id="phone"
+                               value="{{.customer.phone}}"
+                               class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Status Controls -->
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Account Status</h3>
+                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-900 dark:text-white">Account Active</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Enable or disable customer account</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        {{if .customer.is_active}}
+                        <button type="button" 
+                                hx-post="/api/customers/{{.customer.id}}/suspend" 
+                                hx-target="#form-result" 
+                                hx-swap="innerHTML"
+                                hx-confirm="Are you sure you want to suspend this customer?"
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Suspend Account
+                        </button>
+                        {{else}}
+                        <button type="button" 
+                                hx-post="/api/customers/{{.customer.id}}/reactivate" 
+                                hx-target="#form-result" 
+                                hx-swap="innerHTML"
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Reactivate Account
+                        </button>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIP Configuration -->
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">SIP Configuration</h3>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <!-- SIP Username -->
+                    <div>
+                        <label for="sip_username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            SIP Username *
+                        </label>
+                        <input type="text" 
+                               name="sip_username" 
+                               id="sip_username" 
+                               required
+                               value="{{.customer.sip_username}}"
+                               class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- SIP Password -->
+                    <div>
+                        <label for="sip_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            SIP Password
+                        </label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <input type="password" 
+                                   name="sip_password" 
+                                   id="sip_password" 
+                                   placeholder="Leave blank to keep current password"
+                                   class="block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm pr-20">
+                            <button type="button" 
+                                    onclick="generatePassword()"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-indigo-600 hover:text-indigo-500">
+                                Generate New
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Result Area -->
+            <div id="form-result" class="mb-4"></div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-between">
+                <button type="button" 
+                        hx-delete="/api/customers/{{.customer.id}}" 
+                        hx-target="#form-result" 
+                        hx-swap="innerHTML"
+                        hx-confirm="Are you sure you want to delete this customer? This action cannot be undone."
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Delete Customer
+                </button>
+                
+                <div class="flex space-x-3">
+                    <button type="button" 
+                            hx-get="/customers" 
+                            hx-target="#main-content" 
+                            hx-swap="innerHTML"
+                            class="bg-white dark:bg-gray-700 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <span id="form-loading" class="htmx-indicator">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Updating...
+                        </span>
+                        <span class="htmx-indicator-none">Update Customer</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function generatePassword() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById('sip_password').value = password;
+}
+</script>
+{{end}}
