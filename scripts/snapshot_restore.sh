@@ -16,6 +16,16 @@ DB_PORT="${DB_PORT:-5432}"
 DB_NAME="${DB_NAME:-e173_gateway}"
 DB_USER="${DB_USER:-e173_user}"
 
+# Load database credentials from .env
+if [ -f "$PROJECT_DIR/.env" ]; then
+    export $(grep -v '^#' "$PROJECT_DIR/.env" | xargs)
+    export PGPASSWORD="$DB_PASSWORD"
+    DB_HOST="$DB_HOST"
+    DB_PORT="$DB_PORT"
+    DB_NAME="$DB_NAME"
+    DB_USER="$DB_USER"
+fi
+
 # Check if commit ID provided
 if [ $# -eq 0 ]; then
     echo "❌ Usage: $0 <commit_id>"

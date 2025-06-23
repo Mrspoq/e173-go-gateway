@@ -53,6 +53,12 @@ TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BACKUP_FILE="$BACKUPS_DIR/e173_gateway_${COMMIT_ID}.sql"
 BACKUP_FILE_GZ="${BACKUP_FILE}.gz"
 
+# Load database credentials from .env
+if [ -f "$PROJECT_DIR/.env" ]; then
+    export $(grep -v '^#' "$PROJECT_DIR/.env" | xargs)
+    export PGPASSWORD="$DB_PASSWORD"
+fi
+
 echo "🗄️  Creating database backup..."
 if pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" > "$BACKUP_FILE"; then
     # Compress backup
