@@ -12,6 +12,12 @@ DB_NAME="${DB_NAME:-e173_gateway}"
 DB_USER="${DB_USER:-e173_user}"
 BACKUP_DIR="${BACKUP_DIR:-./backups}"
 
+# Load database credentials from .env
+if [ -f "$(dirname "$0")/../.env" ]; then
+    export $(grep -v '^#' "$(dirname "$0")/../.env" | xargs)
+    export PGPASSWORD="$DB_PASSWORD"
+fi
+
 # Create backup directory
 mkdir -p "$BACKUP_DIR"
 
@@ -25,7 +31,8 @@ echo "🗄️  Database: $DB_NAME"
 echo "📁 Backup file: $BACKUP_FILE"
 
 # Create backup
-if pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" > "$BACKUP_FILE"; then
+echo "📊 Creating database backup..."
+if pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -w > "$BACKUP_FILE"; then
     echo "✅ Backup completed successfully!"
     echo "📊 Backup size: $(du -h "$BACKUP_FILE" | cut -f1)"
     

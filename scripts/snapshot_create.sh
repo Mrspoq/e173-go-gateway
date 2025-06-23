@@ -60,7 +60,7 @@ if [ -f "$PROJECT_DIR/.env" ]; then
 fi
 
 echo "🗄️  Creating database backup..."
-if pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" > "$BACKUP_FILE"; then
+if pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -w > "$BACKUP_FILE"; then
     # Compress backup
     gzip "$BACKUP_FILE"
     BACKUP_SIZE=$(du -h "$BACKUP_FILE_GZ" | cut -f1)
@@ -70,10 +70,20 @@ else
     exit 1
 fi
 
-# Count records for metadata
-RECORD_COUNT=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "
-    SELECT SUM(n_tup_ins + n_tup_upd) 
-    FROM pg_stat_user_tables;" 2>/dev/null | tr -d ' ' || echo "0")
+# Get record count for metadata
+RECORD_COUNT=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -w -t -c "
+    SELECT 
+        COALESCE(SUM(count), 0) 
+    FROM (
+        SELECT COUNT(*) as count FROM modems
+        UNION ALL
+        SELECT COUNT(*) FROM sim_cards  
+        UNION ALL
+        SELECT COUNT(*) FROM call_detail_records
+        UNION ALL
+        SELECT COUNT(*) FROM gateways
+    ) counts;
+" 2>/dev/null | tr -d ' ')
 
 # Create metadata
 METADATA_FILE="$BACKUPS_DIR/e173_gateway_${COMMIT_ID}.meta.json"
