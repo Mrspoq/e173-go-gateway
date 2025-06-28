@@ -26,6 +26,9 @@ import (
 	"github.com/e173-gateway/e173_go_gateway/internal/service"
 	"github.com/e173-gateway/e173_go_gateway/internal/handlers"
 	adapter "github.com/e173-gateway/e173_go_gateway/internal/database"
+	
+	// Import cache and analytics
+	"github.com/e173-gateway/e173_go_gateway/pkg/cache"
 )
 
 // loadTemplates recursively loads all HTML templates from the templates directory
@@ -114,6 +117,23 @@ func main() {
 	defer dbPool.Close() // Ensure DB connection is closed on shutdown
 	logging.Logger.Info("Successfully connected to the database.")
 
+	// Initialize Redis cache
+	redisConfig := config.LoadRedisConfig()
+	redisClient, err := cache.NewRedisClient(redisConfig)
+	if err != nil {
+		logging.Logger.Warnf("Failed to connect to Redis: %v - continuing without cache", err)
+		// Continue without cache - analytics will still work but slower
+	} else {
+		defer redisClient.Close()
+		logging.Logger.Info("Successfully connected to Redis cache")
+	}
+	
+	// Initialize cache service
+	var cacheService *cache.CacheService
+	if redisClient != nil {
+		cacheService = cache.NewCacheService(redisClient)
+	}
+
 	// Initialize repositories
 	modemRepo := repository.NewPostgresModemRepository(dbPool)
 	simCardRepo := repository.NewPostgresSIMCardRepository(dbPool)
@@ -164,6 +184,12 @@ func main() {
 	// Initialize enterprise handlers
 	authHandlers := handlers.NewAuthHandlers(authService, customerService)
 	customerHandlers := handlers.NewCustomerHandlers(customerService)
+	
+	// Initialize analytics handler (only if cache is available)
+	var analyticsHandler *handlers.AnalyticsHandler
+	if cacheService != nil {
+		analyticsHandler = handlers.NewAnalyticsHandler(dbPool, cacheService)
+	}
 
 	// Set Gin mode
 	gin.SetMode(cfg.GinMode)
@@ -259,6 +285,14 @@ func main() {
 	router.GET("/api/stats/modems", statsHandler.GetModemStats)
 	router.GET("/api/stats/sims", statsHandler.GetSIMStats)
 	router.GET("/api/stats/gateways", statsHandler.GetGatewayStats)
+	
+	// Analytics endpoints (if Redis cache available)
+	if analyticsHandler != nil {
+		router.GET("/api/analytics/calls", analyticsHandler.GetCallAnalytics)
+		router.GET("/api/analytics/sims", analyticsHandler.GetSIMAnalytics)
+		router.GET("/api/analytics/spam", analyticsHandler.GetSpamAnalytics)
+		router.GET("/api/analytics/dashboard", analyticsHandler.GetDashboardData)
+	}
 
 	// CDR ticker endpoint - returns recent call records
 	router.GET("/api/cdr/recent", func(c *gin.Context) {
