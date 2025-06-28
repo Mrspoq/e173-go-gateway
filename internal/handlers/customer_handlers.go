@@ -459,6 +459,16 @@ func (h *CustomerHandlers) GetCustomerStats(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	// Check if this is an HTMX request
+	if r.Header.Get("HX-Request") == "true" {
+		// Return HTML for HTMX
+		w.Header().Set("Content-Type", "text/html")
+		// Return just the count for now
+		w.Write([]byte(strconv.FormatInt(stats.TotalCustomers, 10)))
+		return
+	}
+
+	// Return JSON for API requests
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(stats)
 }

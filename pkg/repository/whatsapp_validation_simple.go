@@ -5,7 +5,7 @@ import (
     "time"
     
     "github.com/jackc/pgx/v4/pgxpool"
-    "github.com/e173-gateway/e173_go_gateway/pkg/validation"
+    "github.com/e173-gateway/e173_go_gateway/pkg/models"
 )
 
 // SimpleWhatsAppValidationRepository implements caching using the existing schema
@@ -19,7 +19,7 @@ func NewSimpleWhatsAppValidationRepository(db *pgxpool.Pool) WhatsAppValidationR
 }
 
 // GetValidation retrieves a cached validation result from the existing table
-func (r *SimpleWhatsAppValidationRepository) GetValidation(ctx context.Context, phoneNumber string) (*validation.ValidationResult, error) {
+func (r *SimpleWhatsAppValidationRepository) GetValidation(ctx context.Context, phoneNumber string) (*models.ValidationResult, error) {
     query := `
         SELECT has_whatsapp, confidence_score, checked_at
         FROM whatsapp_validation_cache
@@ -27,7 +27,7 @@ func (r *SimpleWhatsAppValidationRepository) GetValidation(ctx context.Context, 
         LIMIT 1
     `
     
-    var result validation.ValidationResult
+    var result models.ValidationResult
     var confidence *float64
     
     err := r.db.QueryRow(ctx, query, phoneNumber).Scan(
@@ -61,7 +61,7 @@ func (r *SimpleWhatsAppValidationRepository) GetValidation(ctx context.Context, 
 }
 
 // SaveValidation stores a validation result in the existing cache table
-func (r *SimpleWhatsAppValidationRepository) SaveValidation(ctx context.Context, result *validation.ValidationResult) error {
+func (r *SimpleWhatsAppValidationRepository) SaveValidation(ctx context.Context, result *models.ValidationResult) error {
     query := `
         INSERT INTO whatsapp_validation_cache (
             phone_number, has_whatsapp, confidence_score, checked_at, expires_at

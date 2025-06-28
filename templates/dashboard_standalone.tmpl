@@ -28,12 +28,13 @@
                     </div>
 
                     <!-- Stats Cards Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" 
-                         hx-get="/api/stats" 
-                         hx-trigger="load, every 5s" 
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8" 
+                         id="stats-cards"
+                         hx-get="/api/stats/cards" 
+                         hx-trigger="load" 
                          hx-swap="innerHTML">
                         <!-- Loading placeholders will be replaced by API response -->
-                        <div class="animate-pulse">Loading stats...</div>
+                        <div class="col-span-full text-center animate-pulse">Loading stats...</div>
                     </div>
 
                     <!-- Main Content Grid -->

@@ -7,13 +7,13 @@ import (
     "time"
     
     "github.com/jackc/pgx/v4/pgxpool"
-    "github.com/e173-gateway/e173_go_gateway/pkg/validation"
+    "github.com/e173-gateway/e173_go_gateway/pkg/models"
 )
 
 // WhatsAppValidationRepository handles database operations for WhatsApp validation cache
 type WhatsAppValidationRepository interface {
-    GetValidation(ctx context.Context, phoneNumber string) (*validation.ValidationResult, error)
-    SaveValidation(ctx context.Context, result *validation.ValidationResult) error
+    GetValidation(ctx context.Context, phoneNumber string) (*models.ValidationResult, error)
+    SaveValidation(ctx context.Context, result *models.ValidationResult) error
     CleanupExpired(ctx context.Context) error
     GetStats(ctx context.Context) (map[string]interface{}, error)
 }
@@ -29,7 +29,7 @@ func NewPostgresWhatsAppValidationRepository(db *pgxpool.Pool) WhatsAppValidatio
 }
 
 // GetValidation retrieves a cached validation result
-func (r *PostgresWhatsAppValidationRepository) GetValidation(ctx context.Context, phoneNumber string) (*validation.ValidationResult, error) {
+func (r *PostgresWhatsAppValidationRepository) GetValidation(ctx context.Context, phoneNumber string) (*models.ValidationResult, error) {
     query := `
         SELECT has_whatsapp, profile_name, is_business, confidence, checked_at, expires_at, raw_response
         FROM whatsapp_validation_cache
@@ -37,7 +37,7 @@ func (r *PostgresWhatsAppValidationRepository) GetValidation(ctx context.Context
         LIMIT 1
     `
     
-    var result validation.ValidationResult
+    var result models.ValidationResult
     var rawResponse sql.NullString
     var profileName sql.NullString
     var expiresAt time.Time
@@ -69,7 +69,7 @@ func (r *PostgresWhatsAppValidationRepository) GetValidation(ctx context.Context
 }
 
 // SaveValidation stores a validation result in the cache
-func (r *PostgresWhatsAppValidationRepository) SaveValidation(ctx context.Context, result *validation.ValidationResult) error {
+func (r *PostgresWhatsAppValidationRepository) SaveValidation(ctx context.Context, result *models.ValidationResult) error {
     // Convert result to JSON for raw_response field
     rawJSON, err := json.Marshal(result)
     if err != nil {

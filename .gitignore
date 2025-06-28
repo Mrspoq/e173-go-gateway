@@ -72,3 +72,6 @@ asterisk_private/
 .mcp/
 MCP_API_KEYS_BACKUP.md
 *_API_KEYS*.md
+
+# GitHub credentials
+.github_config

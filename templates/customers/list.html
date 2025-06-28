@@ -13,7 +13,7 @@
     </div>
     <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
         <button type="button" 
-                hx-get="/api/customers" 
+                hx-get="/api/v1/customers" 
                 hx-target="#customer-list" 
                 hx-swap="innerHTML"
                 class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -52,7 +52,7 @@
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Customers</dt>
                     <dd class="flex items-baseline">
                         <div id="total-customers" 
-                             hx-get="/api/customers/stats" 
+                             hx-get="/api/v1/customers/stats" 
                              hx-trigger="load, every 30s"
                              hx-select="[data-stat='total']"
                              class="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -79,7 +79,7 @@
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Active</dt>
                     <dd class="flex items-baseline">
                         <div id="active-customers" 
-                             hx-get="/api/customers/stats" 
+                             hx-get="/api/v1/customers/stats" 
                              hx-trigger="load, every 30s"
                              hx-select="[data-stat='active']"
                              class="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -106,7 +106,7 @@
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Low Balance</dt>
                     <dd class="flex items-baseline">
                         <div id="low-balance-customers" 
-                             hx-get="/api/customers/stats" 
+                             hx-get="/api/v1/customers/stats" 
                              hx-trigger="load, every 30s"
                              hx-select="[data-stat='low_balance']"
                              class="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -133,7 +133,7 @@
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Monthly Revenue</dt>
                     <dd class="flex items-baseline">
                         <div id="monthly-revenue" 
-                             hx-get="/api/customers/stats" 
+                             hx-get="/api/v1/customers/stats" 
                              hx-trigger="load, every 30s"
                              hx-select="[data-stat='revenue']"
                              class="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -157,7 +157,7 @@
         </p>
     </div>
     <div id="customer-list" 
-         hx-get="/api/customers" 
+         hx-get="/api/v1/customers" 
          hx-trigger="load, every 60s"
          hx-indicator="#loading-indicator">
         <!-- Customer list will be loaded here -->

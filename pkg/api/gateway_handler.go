@@ -306,7 +306,7 @@ func (h *GatewayHandler) GetGatewayListUI(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "gateways/list.html", gin.H{
-		"Title":    "Gateway Management",
+		"title":    "Gateway Management",
 		"Gateways": gateways,
 	})
 }
@@ -315,7 +315,7 @@ func (h *GatewayHandler) GetGatewayListUI(c *gin.Context) {
 // Returns the gateway creation form
 func (h *GatewayHandler) GetGatewayCreateUI(c *gin.Context) {
 	c.HTML(http.StatusOK, "gateways/create.html", gin.H{
-		"Title": "Create Gateway",
+		"title": "Create Gateway",
 	})
 }
 
@@ -352,7 +352,7 @@ func (h *GatewayHandler) GetGatewayEditUI(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "gateways/edit.html", gin.H{
-		"Title":   "Edit Gateway",
+		"title":   "Edit Gateway",
 		"Gateway": gateway,
 	})
 }

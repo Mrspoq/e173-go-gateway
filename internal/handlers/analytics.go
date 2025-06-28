@@ -5,7 +5,7 @@ import (
     "time"
     
     "github.com/gin-gonic/gin"
-    "github.com/jackc/pgx/v4/pgxpool"
+    "github.com/jackc/pgx/v5/pgxpool"
     
     "github.com/e173-gateway/e173_go_gateway/pkg/analytics"
     "github.com/e173-gateway/e173_go_gateway/pkg/cache"

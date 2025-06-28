@@ -7,6 +7,8 @@ import (
     "io"
     "net/http"
     "time"
+    
+    "github.com/e173-gateway/e173_go_gateway/pkg/models"
 )
 
 // WhatsAppValidator handles WhatsApp Business API validation
@@ -15,17 +17,6 @@ type WhatsAppValidator struct {
     baseURL   string
     client    *http.Client
     cache     *ValidationCache
-}
-
-// ValidationResult contains WhatsApp validation results
-type ValidationResult struct {
-    PhoneNumber     string    `json:"phone_number"`
-    HasWhatsApp     bool      `json:"has_whatsapp"`
-    IsBusinessAccount bool    `json:"is_business_account"`
-    ProfileName     string    `json:"profile_name"`
-    Confidence      float64   `json:"confidence"`
-    LastUpdated     time.Time `json:"last_updated"`
-    Source          string    `json:"source"`
 }
 
 // WhatsAppAPIResponse represents the API response structure
@@ -40,7 +31,7 @@ type WhatsAppAPIResponse struct {
 
 // ValidationCache handles caching of validation results
 type ValidationCache struct {
-    results map[string]*ValidationResult
+    results map[string]*models.ValidationResult
     expiry  time.Duration
 }
 
@@ -53,14 +44,14 @@ func NewWhatsAppValidator(apiKey string) *WhatsAppValidator {
             Timeout: 10 * time.Second,
         },
         cache: &ValidationCache{
-            results: make(map[string]*ValidationResult),
+            results: make(map[string]*models.ValidationResult),
             expiry:  24 * time.Hour, // Cache for 24 hours
         },
     }
 }
 
 // ValidateNumber checks if a phone number has WhatsApp
-func (w *WhatsAppValidator) ValidateNumber(phoneNumber string) (*ValidationResult, error) {
+func (w *WhatsAppValidator) ValidateNumber(phoneNumber string) (*models.ValidationResult, error) {
     // Check cache first
     if cached := w.cache.Get(phoneNumber); cached != nil {
         return cached, nil
@@ -110,7 +101,7 @@ func (w *WhatsAppValidator) IsLikelyRealPerson(phoneNumber string) (bool, float6
 }
 
 // makeAPIRequest performs the actual API call to WhatsApp
-func (w *WhatsAppValidator) makeAPIRequest(phoneNumber string) (*ValidationResult, error) {
+func (w *WhatsAppValidator) makeAPIRequest(phoneNumber string) (*models.ValidationResult, error) {
     // Prepare request payload
     payload := map[string]interface{}{
         "contacts": []map[string]string{
@@ -159,7 +150,7 @@ func (w *WhatsAppValidator) makeAPIRequest(phoneNumber string) (*ValidationResul
     }
 
     // Convert to our format
-    result := &ValidationResult{
+    result := &models.ValidationResult{
         PhoneNumber:       phoneNumber,
         HasWhatsApp:       apiResp.WhatsApp,
         IsBusinessAccount: apiResp.Business,
@@ -200,7 +191,7 @@ func (w *WhatsAppValidator) calculateConfidence(resp WhatsAppAPIResponse) float6
 // Cache methods
 
 // Get retrieves a cached validation result
-func (c *ValidationCache) Get(phoneNumber string) *ValidationResult {
+func (c *ValidationCache) Get(phoneNumber string) *models.ValidationResult {
     result, exists := c.results[phoneNumber]
     if !exists {
         return nil
@@ -216,7 +207,7 @@ func (c *ValidationCache) Get(phoneNumber string) *ValidationResult {
 }
 
 // Set stores a validation result in cache
-func (c *ValidationCache) Set(phoneNumber string, result *ValidationResult) {
+func (c *ValidationCache) Set(phoneNumber string, result *models.ValidationResult) {
     c.results[phoneNumber] = result
 }
 
@@ -255,7 +246,7 @@ func NewNumVerifyValidator(apiKey string) *NumVerifyValidator {
 }
 
 // ValidateNumber validates using NumVerify API
-func (n *NumVerifyValidator) ValidateNumber(phoneNumber string) (*ValidationResult, error) {
+func (n *NumVerifyValidator) ValidateNumber(phoneNumber string) (*models.ValidationResult, error) {
     url := fmt.Sprintf("http://apilayer.net/api/validate?access_key=%s&number=%s", 
         n.apiKey, phoneNumber)
 
@@ -286,7 +277,7 @@ func (n *NumVerifyValidator) ValidateNumber(phoneNumber string) (*ValidationResu
         confidence = 0.7
     }
 
-    return &ValidationResult{
+    return &models.ValidationResult{
         PhoneNumber: phoneNumber,
         HasWhatsApp: result.Valid && result.LineType == "mobile",
         Confidence:  confidence,

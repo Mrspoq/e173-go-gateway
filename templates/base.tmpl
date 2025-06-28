@@ -47,11 +47,10 @@
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div id="page" class="px-4 py-6 sm:px-0">
                 {{block "content" .}}
-                    {{template "dashboard_content" .}}
-                    {{template "modems_content" .}}
-                    {{template "sims_content" .}}
-                    {{template "cdrs_content" .}}
-                    {{template "blacklist_content" .}}
+                    <!-- Default content if no specific content is defined -->
+                    <div class="text-center text-gray-500 dark:text-gray-400">
+                        <p>No content available</p>
+                    </div>
                 {{end}}
             </div>
         </main>
@@ -59,6 +58,28 @@
     
     <!-- Global notifications area -->
     <div id="notifications" class="fixed top-4 right-4 z-50"></div>
+    
+    <!-- HTMX cleanup script -->
+    <script>
+        // Stop all polling when navigating away from a page
+        document.addEventListener('htmx:beforeSwap', function(evt) {
+            // If we're swapping the main page content
+            if (evt.detail.target.id === 'page') {
+                // Find all elements with polling triggers and abort them
+                document.querySelectorAll('[hx-trigger*="every"]').forEach(function(el) {
+                    htmx.trigger(el, 'htmx:abort');
+                });
+            }
+        });
+        
+        // Clean up intervals when using browser back/forward
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, refresh to ensure clean state
+                window.location.reload();
+            }
+        });
+    </script>
     
     <!-- Custom scripts -->
     {{block "scripts" .}}{{end}}

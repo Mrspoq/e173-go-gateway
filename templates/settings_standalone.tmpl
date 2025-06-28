@@ -34,17 +34,17 @@
                     <!-- Settings Tabs -->
                     <div class="mb-6">
                         <nav class="flex space-x-4" aria-label="Tabs">
-                            <button class="px-3 py-2 font-medium text-sm rounded-md bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                                General
+                            <button onclick="showTab('filter')" id="filter-tab" class="px-3 py-2 font-medium text-sm rounded-md bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                                Filter Settings
                             </button>
-                            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                                AMI Config
-                            </button>
-                            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                            <button onclick="showTab('sip')" id="sip-tab" class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
                                 SIP Settings
                             </button>
-                            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                                Filter Settings
+                            <button onclick="showTab('ami')" id="ami-tab" class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                AMI Config
+                            </button>
+                            <button onclick="showTab('general')" id="general-tab" class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                General
                             </button>
                         </nav>
                     </div>
@@ -52,8 +52,8 @@
                     <!-- Settings Content -->
                     <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                         <div class="px-4 py-5 sm:p-6">
-                            <!-- General Settings -->
-                            <div id="general-settings">
+                            <!-- Filter Settings Tab -->
+                            <div id="filter-settings" class="settings-tab">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
                                     Filter Settings
                                 </h3>
@@ -113,12 +113,183 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- SIP Settings Tab -->
+                            <div id="sip-settings" class="settings-tab hidden">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
+                                    SIP Settings
+                                </h3>
+                                
+                                <div class="space-y-6">
+                                    <!-- SIP Port -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            SIP Port
+                                        </label>
+                                        <input type="number" value="5060" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                                    </div>
+
+                                    <!-- Codec Priority -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Codec Priority
+                                        </label>
+                                        <select multiple class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm h-32">
+                                            <option selected>G.711 (PCMU)</option>
+                                            <option selected>G.711 (PCMA)</option>
+                                            <option>G.729</option>
+                                            <option>GSM</option>
+                                            <option>G.722</option>
+                                        </select>
+                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple codecs</p>
+                                    </div>
+
+                                    <!-- Registration Settings -->
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Registration Settings</h4>
+                                        <div class="space-y-2">
+                                            <div>
+                                                <label class="block text-sm text-gray-700 dark:text-gray-300">
+                                                    Registration Timeout (seconds)
+                                                </label>
+                                                <input type="number" value="3600" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm text-gray-700 dark:text-gray-300">
+                                                    Max Registration Attempts
+                                                </label>
+                                                <input type="number" value="10" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Save Button -->
+                                <div class="mt-6">
+                                    <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Save SIP Settings
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- AMI Settings Tab -->
+                            <div id="ami-settings" class="settings-tab hidden">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
+                                    AMI Configuration
+                                </h3>
+                                
+                                <div class="space-y-6">
+                                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <svg class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                </svg>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                                                    AMI settings are now configured per gateway
+                                                </h3>
+                                                <p class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                                                    To configure AMI settings, go to <a href="/gateways" class="underline font-medium">Gateways</a> and edit individual gateway settings.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- General Settings Tab -->
+                            <div id="general-settings" class="settings-tab hidden">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
+                                    General Settings
+                                </h3>
+                                
+                                <div class="space-y-6">
+                                    <!-- System Name -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            System Name
+                                        </label>
+                                        <input type="text" value="E173 Gateway" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                                    </div>
+
+                                    <!-- Time Zone -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Time Zone
+                                        </label>
+                                        <select class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                                            <option>UTC</option>
+                                            <option>Europe/Madrid</option>
+                                            <option>America/New_York</option>
+                                            <option>Asia/Tokyo</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Logging Level -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Logging Level
+                                        </label>
+                                        <select class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                                            <option>Error</option>
+                                            <option>Warning</option>
+                                            <option selected>Info</option>
+                                            <option>Debug</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Maintenance Mode -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                                Enable Maintenance Mode
+                                            </span>
+                                        </label>
+                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                            When enabled, all incoming calls will receive a maintenance message
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Save Button -->
+                                <div class="mt-6">
+                                    <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Save General Settings
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        
+        // Remove active class from all tab buttons
+        document.querySelectorAll('[id$="-tab"]').forEach(btn => {
+            btn.classList.remove('bg-gray-100', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+            btn.classList.add('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+        });
+        
+        // Show selected tab
+        document.getElementById(tabName + '-settings').classList.remove('hidden');
+        
+        // Activate selected tab button
+        const activeBtn = document.getElementById(tabName + '-tab');
+        activeBtn.classList.remove('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+        activeBtn.classList.add('bg-gray-100', 'text-gray-700', 'dark:bg-gray-800', 'dark:text-gray-300');
+    }
+    </script>
 </body>
 </html>
 {{end}}

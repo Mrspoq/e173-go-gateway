@@ -41,7 +41,7 @@
                                 <div class="ml-5 w-0 flex-1">
                                     <dl>
                                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Online Modems</dt>
-                                        <dd class="text-lg font-medium text-gray-900 dark:text-white" hx-get="/api/stats/modems" hx-trigger="load, every 10s" hx-swap="innerHTML">Loading...</dd>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white" hx-get="/api/stats/modems" hx-trigger="load, every 10s from:closest body" hx-swap="innerHTML">Loading...</dd>
                                     </dl>
                                 </div>
                             </div>

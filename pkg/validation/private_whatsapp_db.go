@@ -9,6 +9,7 @@ import (
     "regexp"
     "time"
     
+    "github.com/e173-gateway/e173_go_gateway/pkg/models"
     "github.com/e173-gateway/e173_go_gateway/pkg/repository"
 )
 
@@ -33,7 +34,7 @@ func NewPrivateWhatsAppValidatorDB(apiKey string, cacheRepo repository.WhatsAppV
 }
 
 // ValidateNumber checks if a phone number has WhatsApp using your private API with DB caching
-func (w *PrivateWhatsAppValidatorDB) ValidateNumber(phoneNumber string) (*ValidationResult, error) {
+func (w *PrivateWhatsAppValidatorDB) ValidateNumber(phoneNumber string) (*models.ValidationResult, error) {
     ctx := context.Background()
     
     // Check database cache first
@@ -62,7 +63,7 @@ func (w *PrivateWhatsAppValidatorDB) ValidateNumber(phoneNumber string) (*Valida
 }
 
 // makePrivateAPIRequest calls your specific API endpoint
-func (w *PrivateWhatsAppValidatorDB) makePrivateAPIRequest(phoneNumber string) (*ValidationResult, error) {
+func (w *PrivateWhatsAppValidatorDB) makePrivateAPIRequest(phoneNumber string) (*models.ValidationResult, error) {
     // Clean phone number (remove + and spaces)
     cleanNumber := w.cleanPhoneNumber(phoneNumber)
     
@@ -98,13 +99,13 @@ func (w *PrivateWhatsAppValidatorDB) makePrivateAPIRequest(phoneNumber string) (
     }
     
     // Parse your API response format
-    var apiResp PrivateWhatsAppResponse
+    var apiResp models.PrivateWhatsAppResponse
     if err := json.Unmarshal(body, &apiResp); err != nil {
         return nil, fmt.Errorf("failed to parse response: %w", err)
     }
     
     // Convert to our standard format
-    result := &ValidationResult{
+    result := &models.ValidationResult{
         PhoneNumber:       phoneNumber,
         HasWhatsApp:       apiResp.Valid && apiResp.Status,
         IsBusinessAccount: false, // Your API doesn't provide this
@@ -159,14 +160,14 @@ func (w *PrivateWhatsAppValidatorDB) IsLikelyRealPerson(phoneNumber string) (boo
 }
 
 // BatchValidate validates multiple numbers efficiently
-func (w *PrivateWhatsAppValidatorDB) BatchValidate(phoneNumbers []string) (map[string]*ValidationResult, error) {
-    results := make(map[string]*ValidationResult)
+func (w *PrivateWhatsAppValidatorDB) BatchValidate(phoneNumbers []string) (map[string]*models.ValidationResult, error) {
+    results := make(map[string]*models.ValidationResult)
     
     // Process in parallel with goroutines (rate limited)
     semaphore := make(chan struct{}, 5) // Max 5 concurrent requests
     resultChan := make(chan struct {
         number string
-        result *ValidationResult
+        result *models.ValidationResult
         err    error
     }, len(phoneNumbers))
     
@@ -179,7 +180,7 @@ func (w *PrivateWhatsAppValidatorDB) BatchValidate(phoneNumbers []string) (map[s
             result, err := w.ValidateNumber(num)
             resultChan <- struct {
                 number string
-                result *ValidationResult
+                result *models.ValidationResult
                 err    error
             }{num, result, err}
         }(number)

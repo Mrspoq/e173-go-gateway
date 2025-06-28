@@ -36,6 +36,57 @@
                            placeholder="e.g., Data Center 1, Rack A">
                 </div>
 
+                <!-- AMI Configuration -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-4">Asterisk Manager Interface (AMI) Configuration</h4>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- AMI Host -->
+                        <div>
+                            <label for="ami_host" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                AMI Host/IP
+                            </label>
+                            <input type="text" name="ami_host" id="ami_host" required
+                                   class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                   placeholder="e.g., 192.168.1.100">
+                        </div>
+
+                        <!-- AMI Port -->
+                        <div>
+                            <label for="ami_port" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                AMI Port
+                            </label>
+                            <input type="text" name="ami_port" id="ami_port" value="5038"
+                                   class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                   placeholder="5038">
+                        </div>
+
+                        <!-- AMI Username -->
+                        <div>
+                            <label for="ami_user" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                AMI Username
+                            </label>
+                            <input type="text" name="ami_user" id="ami_user" required
+                                   class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                   placeholder="e.g., admin">
+                        </div>
+
+                        <!-- AMI Password -->
+                        <div>
+                            <label for="ami_pass" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                AMI Password
+                            </label>
+                            <input type="password" name="ami_pass" id="ami_pass" required
+                                   class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                   placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        AMI credentials are used to connect to the Asterisk server for managing calls and monitoring modem status.
+                    </p>
+                </div>
+
                 <!-- Notes -->
                 <div>
                     <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -71,7 +122,11 @@ document.getElementById('create-gateway-form').addEventListener('submit', functi
     const formData = {
         name: document.getElementById('name').value,
         location: document.getElementById('location').value,
-        notes: document.getElementById('notes').value
+        notes: document.getElementById('notes').value,
+        ami_host: document.getElementById('ami_host').value,
+        ami_port: document.getElementById('ami_port').value || '5038',
+        ami_user: document.getElementById('ami_user').value,
+        ami_pass: document.getElementById('ami_pass').value
     };
     
     fetch('/api/v1/gateways', {

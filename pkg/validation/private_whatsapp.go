@@ -7,6 +7,8 @@ import (
     "net/http"
     "regexp"
     "time"
+    
+    "github.com/e173-gateway/e173_go_gateway/pkg/models"
 )
 
 // PrivateWhatsAppValidator uses your private WhatsApp validation API
@@ -15,14 +17,6 @@ type PrivateWhatsAppValidator struct {
     baseURL    string
     client     *http.Client
     cache      *ValidationCache
-}
-
-// PrivateWhatsAppResponse represents your API response structure
-type PrivateWhatsAppResponse struct {
-    Status    bool   `json:"status"`    // true if API responded
-    Valid     bool   `json:"valid"`     // true if number has WhatsApp
-    WaID      string `json:"wa_id"`     // WhatsApp ID (empty if invalid)
-    ChatLink  string `json:"chat_link"` // WhatsApp chat link (empty if invalid)
 }
 
 // NewPrivateWhatsAppValidator creates validator for your private API
@@ -34,14 +28,14 @@ func NewPrivateWhatsAppValidator(apiKey string) *PrivateWhatsAppValidator {
             Timeout: 10 * time.Second,
         },
         cache: &ValidationCache{
-            results: make(map[string]*ValidationResult),
+            results: make(map[string]*models.ValidationResult),
             expiry:  24 * time.Hour, // Cache for 24 hours
         },
     }
 }
 
 // ValidateNumber checks if a phone number has WhatsApp using your private API
-func (w *PrivateWhatsAppValidator) ValidateNumber(phoneNumber string) (*ValidationResult, error) {
+func (w *PrivateWhatsAppValidator) ValidateNumber(phoneNumber string) (*models.ValidationResult, error) {
     // Check cache first
     if cached := w.cache.Get(phoneNumber); cached != nil {
         return cached, nil
@@ -60,7 +54,7 @@ func (w *PrivateWhatsAppValidator) ValidateNumber(phoneNumber string) (*Validati
 }
 
 // makePrivateAPIRequest calls your specific API endpoint
-func (w *PrivateWhatsAppValidator) makePrivateAPIRequest(phoneNumber string) (*ValidationResult, error) {
+func (w *PrivateWhatsAppValidator) makePrivateAPIRequest(phoneNumber string) (*models.ValidationResult, error) {
     // Clean phone number (remove + and spaces)
     cleanNumber := w.cleanPhoneNumber(phoneNumber)
     
@@ -96,13 +90,13 @@ func (w *PrivateWhatsAppValidator) makePrivateAPIRequest(phoneNumber string) (*V
     }
 
     // Parse your API response format
-    var apiResp PrivateWhatsAppResponse
+    var apiResp models.PrivateWhatsAppResponse
     if err := json.Unmarshal(body, &apiResp); err != nil {
         return nil, fmt.Errorf("failed to parse response: %w", err)
     }
 
     // Convert to our standard format
-    result := &ValidationResult{
+    result := &models.ValidationResult{
         PhoneNumber:       phoneNumber,
         HasWhatsApp:       apiResp.Valid && apiResp.Status,
         IsBusinessAccount: false, // Your API doesn't provide this
@@ -157,14 +151,14 @@ func (w *PrivateWhatsAppValidator) IsLikelyRealPerson(phoneNumber string) (bool,
 }
 
 // BatchValidate validates multiple numbers efficiently
-func (w *PrivateWhatsAppValidator) BatchValidate(phoneNumbers []string) (map[string]*ValidationResult, error) {
-    results := make(map[string]*ValidationResult)
+func (w *PrivateWhatsAppValidator) BatchValidate(phoneNumbers []string) (map[string]*models.ValidationResult, error) {
+    results := make(map[string]*models.ValidationResult)
     
     // Process in parallel with goroutines (rate limited)
     semaphore := make(chan struct{}, 5) // Max 5 concurrent requests
     resultChan := make(chan struct {
         number string
-        result *ValidationResult
+        result *models.ValidationResult
         err    error
     }, len(phoneNumbers))
     
@@ -177,7 +171,7 @@ func (w *PrivateWhatsAppValidator) BatchValidate(phoneNumbers []string) (map[str
             result, err := w.ValidateNumber(num)
             resultChan <- struct {
                 number string
-                result *ValidationResult
+                result *models.ValidationResult
                 err    error
             }{num, result, err}
         }(number)
@@ -201,5 +195,5 @@ func (w *PrivateWhatsAppValidator) GetCacheStats() map[string]interface{} {
 
 // ClearCache removes all cached validation results
 func (w *PrivateWhatsAppValidator) ClearCache() {
-    w.cache.results = make(map[string]*ValidationResult)
+    w.cache.results = make(map[string]*models.ValidationResult)
 }
