@@ -521,11 +521,13 @@
         }
 
         function showCreateCustomer() {
-            alert('Create customer form coming soon...');
+            // Navigate to create customer page
+            window.location.href = '/customers/create';
         }
 
         function editCustomer(customerId) {
-            alert(`Edit customer ${customerId} coming soon...`);
+            // Navigate to edit customer page
+            window.location.href = `/customers/${customerId}/edit`;
         }
     </script>
 </body>

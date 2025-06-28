@@ -46,7 +46,13 @@
         <!-- Main content -->
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div id="page" class="px-4 py-6 sm:px-0">
-                {{template "body" .}}
+                {{block "content" .}}
+                    {{template "dashboard_content" .}}
+                    {{template "modems_content" .}}
+                    {{template "sims_content" .}}
+                    {{template "cdrs_content" .}}
+                    {{template "blacklist_content" .}}
+                {{end}}
             </div>
         </main>
     </div>

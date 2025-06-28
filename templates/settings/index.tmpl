@@ -1,0 +1,111 @@
+{{define "settings/index.tmpl"}}
+{{template "base" .}}
+{{end}}
+
+{{define "settings_content"}}
+<div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
+            System Settings
+        </h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Configure system parameters and integrations
+        </p>
+    </div>
+
+    <!-- Settings Tabs -->
+    <div class="mb-6">
+        <nav class="flex space-x-4" aria-label="Tabs">
+            <button class="px-3 py-2 font-medium text-sm rounded-md bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                General
+            </button>
+            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                AMI Config
+            </button>
+            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                SIP Settings
+            </button>
+            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                API Keys
+            </button>
+            <button class="px-3 py-2 font-medium text-sm rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                Notifications
+            </button>
+        </nav>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <!-- General Settings -->
+            <div id="general-settings">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
+                    General Settings
+                </h3>
+                
+                <div class="space-y-6">
+                    <!-- System Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            System Name
+                        </label>
+                        <input type="text" value="E173 Gateway System" 
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                    </div>
+
+                    <!-- Default Timeout -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Default Call Timeout (seconds)
+                        </label>
+                        <input type="number" value="30" 
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                    </div>
+
+                    <!-- Max Concurrent Calls -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Max Concurrent Calls per Modem
+                        </label>
+                        <input type="number" value="2" 
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
+                    </div>
+
+                    <!-- Auto-Blacklist Settings -->
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Auto-Blacklist Rules</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" checked class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                    Block numbers with >5 calls in 10 minutes
+                                </span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" checked class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                    Block numbers with <5 second average call duration
+                                </span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                    Block international numbers
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="mt-6">
+                    <button class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

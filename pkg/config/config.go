@@ -20,6 +20,9 @@ type AppConfig struct {
 	GinMode        string // "debug" or "release"
 	LogLevel       string // e.g., "debug", "info", "warn", "error"
 	LogFormat      string // "json" or "text"
+	JWTSecret      string // JWT signing secret
+	JWTExpiry      string // JWT token expiry duration (e.g., "24h")
+	RefreshExpiry  string // Refresh token expiry duration (e.g., "7d")
 }
 
 // LoadConfig loads configuration from environment variables or defaults.
@@ -34,6 +37,9 @@ func LoadConfig() *AppConfig {
 		GinMode:        getEnv("GIN_MODE", "debug"),
 		LogLevel:       getEnv("LOG_LEVEL", "info"),
 		LogFormat:      getEnv("LOG_FORMAT", "text"),
+		JWTSecret:      getEnv("JWT_SECRET", ""),
+		JWTExpiry:      getEnv("JWT_EXPIRY", "24h"),
+		RefreshExpiry:  getEnv("REFRESH_EXPIRY", "7d"),
 	}
 
 	// Initialize logger early if its config is available, or use a temp logger
@@ -70,6 +76,9 @@ func scrubbedConfigForLog(cfg *AppConfig) AppConfig {
 	}
 	if safeCfg.AsteriskAMIPass != "" {
 		safeCfg.AsteriskAMIPass = "****"
+	}
+	if safeCfg.JWTSecret != "" {
+		safeCfg.JWTSecret = "****"
 	}
 	return safeCfg
 }

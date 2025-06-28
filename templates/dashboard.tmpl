@@ -1,192 +1,76 @@
-{{define "body"}}
-<!-- Dashboard Header -->
-<div class="md:flex md:items-center md:justify-between mb-8">
-    <div class="flex-1 min-w-0">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-            Dashboard
-        </h2>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Real-time overview of your E173 Gateway system
-        </p>
-    </div>
-    <div class="mt-4 flex md:mt-0 md:ml-4">
-        <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            Refresh All
-        </button>
-    </div>
-</div>
+{{template "base" .}}
 
-<!-- Stats Grid -->
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-    <!-- Online Modems Card -->
-    <div id="modem-stats-card" 
-         hx-get="/api/v1/stats/modems" 
+{{define "dashboard_content"}}
+<div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Dashboard Header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Real-Time Dashboard</h2>
+        <p class="text-gray-600 dark:text-gray-300">Live monitoring and control for E173 gateway modems</p>
+    </div>
+
+    <!-- Stats Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" 
+         hx-get="/api/stats" 
          hx-trigger="load, every 5s" 
-         hx-swap="outerHTML"
-         class="dashboard-card">
-        <div class="flex items-center">
-            <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+         hx-swap="innerHTML">
+        <!-- Loading placeholders will be replaced by API response -->
+        <div class="animate-pulse">Loading stats...</div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Live Modem Status Panel -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Live Modem Status</h3>
+                <div class="animate-pulse htmx-indicator">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                 </div>
             </div>
-            <div class="ml-5 w-0 flex-1">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Online Modems</dt>
-                    <dd class="flex items-baseline">
-                        <div class="text-2xl font-semibold text-gray-900 dark:text-white">
-                            Loading...
-                        </div>
-                    </dd>
-                </dl>
+            <div class="space-y-4" 
+                 hx-get="/api/modems/status" 
+                 hx-trigger="load, every 5s" 
+                 hx-swap="innerHTML">
+                <div class="animate-pulse">Loading modem status...</div>
             </div>
         </div>
-    </div>
 
-    <!-- SIMs Low Balance Card -->
-    <div id="sim-balance-card" 
-         hx-get="/api/v1/stats/sims" 
-         hx-trigger="load, every 5s" 
-         hx-swap="outerHTML"
-         class="dashboard-card">
-        <div class="flex items-center">
-            <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-amber-100 rounded-md flex items-center justify-center">
-                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+        <!-- Recent Call Activity Panel -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Call Activity</h3>
+                <div class="animate-pulse htmx-indicator">
+                    <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
                 </div>
             </div>
-            <div class="ml-5 w-0 flex-1">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">SIMs Low Balance</dt>
-                    <dd class="flex items-baseline">
-                        <div class="text-2xl font-semibold text-gray-900 dark:text-white">
-                            Loading...
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-        </div>
-    </div>
-
-    <!-- Live Calls Card -->
-    <div id="live-calls-card" 
-         hx-get="/api/v1/stats/calls" 
-         hx-trigger="load, every 3s" 
-         hx-swap="outerHTML"
-         class="dashboard-card">
-        <div class="flex items-center">
-            <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                    </svg>
+            <div class="max-h-96 overflow-y-auto">
+                <div class="space-y-3" 
+                     hx-get="/api/cdr/recent" 
+                     hx-trigger="load, every 3s" 
+                     hx-swap="innerHTML">
+                    <div class="animate-pulse">Loading recent calls...</div>
                 </div>
             </div>
-            <div class="ml-5 w-0 flex-1">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Live Calls</dt>
-                    <dd class="flex items-baseline">
-                        <div class="text-2xl font-semibold text-gray-900 dark:text-white">
-                            Loading...
-                        </div>
-                    </dd>
-                </dl>
-            </div>
         </div>
     </div>
 
-    <!-- Spam Blocked Card -->
-    <div id="spam-blocked-card" 
-         hx-get="/api/v1/stats/spam" 
-         hx-trigger="load, every 10s" 
-         hx-swap="outerHTML"
-         class="dashboard-card">
-        <div class="flex items-center">
-            <div class="flex-shrink-0">
-                <div class="w-8 h-8 bg-red-100 rounded-md flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Spam Blocked Today</dt>
-                    <dd class="flex items-baseline">
-                        <div class="text-2xl font-semibold text-gray-900 dark:text-white">
-                            Loading...
-                        </div>
-                    </dd>
-                </dl>
-            </div>
+    <!-- Quick Actions -->
+    <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h3>
+        <div class="flex flex-wrap gap-4">
+            <a href="/customers" class="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                Manage Customers
+            </a>
+            <a href="/modems" class="bg-green-500 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                Modem Control
+            </a>
+            <a href="/sims" class="bg-purple-500 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                SIM Management
+            </a>
+            <a href="/gateways" class="bg-orange-500 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                Gateway Settings
+            </a>
         </div>
     </div>
-</div>
-
-<!-- Main Content Grid -->
-<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-    <!-- Modem Status Panel -->
-    <div class="dashboard-card">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Modem Status</h3>
-            <button hx-get="/ui/v1/modems/refresh" hx-target="#modem-list" hx-swap="innerHTML" 
-                    class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                Refresh
-            </button>
-        </div>
-        <div id="modem-list" 
-             hx-get="/ui/v1/modems/list" 
-             hx-trigger="load, every 10s" 
-             hx-swap="innerHTML">
-            <div class="text-center py-4 text-gray-500 dark:text-gray-400">
-                Loading modems...
-            </div>
-        </div>
-    </div>
-
-    <!-- Live CDR Ticker -->
-    <div class="dashboard-card">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Recent Call Activity</h3>
-            <span class="text-sm text-gray-500 dark:text-gray-400">Live updates</span>
-        </div>
-        <div class="overflow-hidden">
-            <div class="max-h-64 overflow-y-auto">
-                <table class="min-w-full">
-                    <thead class="bg-gray-50 dark:bg-gray-800">
-                        <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">From</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">To</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cdr-stream" 
-                           hx-get="/ui/v1/cdr/stream" 
-                           hx-trigger="load, every 3s" 
-                           hx-swap="beforeend scroll:bottom"
-                           class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                        <!-- CDR entries will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- System Alerts (if any) -->
-<div id="system-alerts" 
-     hx-get="/ui/v1/alerts" 
-     hx-trigger="load, every 30s" 
-     hx-swap="innerHTML"
-     class="mt-6">
-    <!-- Alerts will be loaded here -->
 </div>
 {{end}}

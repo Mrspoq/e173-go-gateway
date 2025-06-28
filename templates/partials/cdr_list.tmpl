@@ -1,0 +1,42 @@
+{{range .}}
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+        {{.StartTime.Format "2006-01-02 15:04:05"}}
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+        {{.CallerID}}
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+        {{.Destination}}
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+        {{.Duration}}s
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap">
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+            {{if eq .Direction "inbound"}}bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+            {{else if eq .Direction "outbound"}}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+            {{else}}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200{{end}}">
+            {{.Direction}}
+        </span>
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap">
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+            {{if eq .Disposition "ANSWERED"}}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+            {{else if eq .Disposition "NO ANSWER"}}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+            {{else if eq .Disposition "BUSY"}}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+            {{else}}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200{{end}}">
+            {{.Disposition}}
+        </span>
+    </td>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+        R {{printf "%.2f" .Cost}}
+    </td>
+</tr>
+{{else}}
+<tr>
+    <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+        No call records found
+    </td>
+</tr>
+{{end}}

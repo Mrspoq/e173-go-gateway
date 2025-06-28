@@ -67,3 +67,8 @@ temp/
 # Asterisk specific
 asterisk_private/
 *.conf.backup
+
+# MCP API Keys and sensitive configs
+.mcp/
+MCP_API_KEYS_BACKUP.md
+*_API_KEYS*.md

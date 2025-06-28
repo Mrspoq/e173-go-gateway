@@ -1,225 +1,133 @@
-# E173 Go Gateway - Enterprise VoIP Management System
+# E173 Go Gateway
 
-## 🚀 **Current Project Status**
+A telecommunications management platform for handling ~200 Huawei E173 USB modems with VoIP routing, SMS handling, and SIM card management.
 
-This is a **production-ready foundation** for an enterprise VoIP gateway management system built with Go, HTMX, and PostgreSQL. The system manages multiple E173 USB modems across distributed gateways for VoIP call routing and SIM card management.
+## Quick Start
 
-### ✅ **What's Currently Working**
-
-#### **Backend Infrastructure**
-- **Go 1.18** web server with Gin framework
-- **PostgreSQL** database with full schema and migrations
-- **Asterisk AMI** integration for live call data monitoring
-- **HTMX + Tailwind CSS** for dynamic frontend updates
-- **Repository pattern** with clean architecture
-
-#### **Live Dashboard Features**
-- **5 Real-time Stats Cards**: Modems, SIMs, Calls, Spam Detection, Gateways
-- **Auto-refresh**: Cards update every 5 seconds via HTMX
-- **Responsive Design**: Mobile and desktop optimized
-- **Live Data**: Connected to PostgreSQL with real statistics
-
-#### **API Endpoints**
-```
-✅ Gateway Management API (Full CRUD)
-POST   /api/v1/gateways          # Create gateway
-GET    /api/v1/gateways          # List gateways  
-GET    /api/v1/gateways/:id      # Get gateway by ID
-PUT    /api/v1/gateways/:id      # Update gateway
-DELETE /api/v1/gateways/:id      # Delete gateway
-POST   /api/v1/gateways/heartbeat # Gateway heartbeat
-
-✅ Statistics API
-GET    /api/v1/stats/modems      # Modem statistics
-GET    /api/v1/stats/sims        # SIM card statistics  
-GET    /api/v1/stats/calls       # Call statistics
-GET    /api/v1/stats/spam        # Spam detection stats
-GET    /api/v1/stats/gateways    # Gateway statistics
-```
-
-#### **Database Schema**
-```sql
-✅ modems         # USB modem devices
-✅ sim_cards      # SIM card inventory  
-✅ gateways       # Remote gateway instances
-✅ call_detail_records # Call logs (CDR)
-✅ phonebook      # Contact management
-✅ routing_rules  # Call routing logic
-```
-
-## 🏗️ **Architecture Overview**
-
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Web Browser   │    │   Go Backend     │    │   PostgreSQL    │
-│   (HTMX/CSS)    │◄──►│   (Gin/Repos)    │◄──►│   (Database)    │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                       ┌──────────────────┐
-                       │   Asterisk AMI   │
-                       │  (Call Monitor)  │
-                       └──────────────────┘
-```
-
-## 🚧 **What's Missing (Next Phase)**
-
-### **Authentication & User Management**
-- [ ] Login/logout system
-- [ ] User roles (Super Admin, Manager, Employee)
-- [ ] Session management
-- [ ] User registration UI
-
-### **Enterprise UI Features**
-- [ ] Navigation menu/sidebar
-- [ ] Customer Management (CRM)
-- [ ] Modem Management UI
-- [ ] SIM Card Management UI
-- [ ] Call Management & CDR Explorer
-- [ ] System Configuration
-
-### **Advanced Features**
-- [ ] Multi-tenant support
-- [ ] Billing integration
-- [ ] Alert notifications
-- [ ] Reporting & analytics
-
-## 🛠️ **Quick Start**
-
-### **Prerequisites**
-```bash
-# Required software
+### Prerequisites
 - Go 1.18+
 - PostgreSQL 13+
-- Asterisk with chan_dongle
-- Git
-```
+- Node.js 16+ (for Tailwind CSS)
+- Asterisk 18 with chan_dongle
 
-### **Database Setup**
+### Setup
 ```bash
-# Create database and user
+# 1. Clone and enter directory
+git clone <repository>
+cd e173_go_gateway
+
+# 2. Setup database
 sudo -u postgres psql
 CREATE DATABASE e173_gateway;
 CREATE USER e173_user WITH PASSWORD 'e173_pass';
 GRANT ALL PRIVILEGES ON DATABASE e173_gateway TO e173_user;
-```
+\q
 
-### **Environment Configuration**
-```bash
-# Copy environment template
+# 3. Configure environment
 cp .env.example .env
+# Edit .env with your database credentials
 
-# Update database credentials in .env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=e173_gateway
-DB_USER=e173_user
-DB_PASSWORD=e173_pass
+# 4. Build and run
+make migrate     # Run database migrations
+make tailwind    # Build CSS
+make build       # Build binary
+make run         # Start server
 ```
 
-### **Build & Run**
-```bash
-# Install dependencies
-go mod tidy
+### Access
+- Web UI: http://localhost:8080
+- API: http://localhost:8080/api
 
-# Run database migrations
-make migrate-up
-
-# Build the application
-make build
-
-# Start the server
-make run
-
-# Access dashboard
-open http://localhost:8080
-```
-
-## 📁 **Project Structure**
+## Project Structure
 
 ```
 e173_go_gateway/
-├── cmd/server/           # Main application entry
-├── pkg/
-│   ├── api/             # HTTP handlers
-│   ├── config/          # Configuration management
-│   ├── models/          # Data models
-│   └── repository/      # Database layer
-├── internal/
-│   ├── database/        # DB migrations & setup
-│   └── handlers/        # Enterprise handlers
-├── templates/           # HTML templates
-├── static/             # CSS/JS assets
-├── scripts/            # Setup scripts
-└── docs/               # Documentation
-
-Database Migrations: internal/database/migrations/
-Templates: templates/**/*.html
-Static Assets: static/css/style.css
+├── cmd/server/main.go      # Application entry point
+├── internal/               # Private application code
+│   ├── database/          # Models and migrations
+│   ├── handlers/          # HTTP handlers
+│   ├── repository/        # Data access layer
+│   └── service/          # Business logic
+├── pkg/                   # Public packages
+│   ├── ami/              # Asterisk integration
+│   ├── auth/             # Authentication
+│   ├── config/           # Configuration
+│   ├── models/           # Shared models
+│   └── repository/       # Repository interfaces
+├── templates/             # HTMX templates
+├── web/static/           # Static assets
+└── migrations/           # Database migrations
 ```
 
-## 🔧 **Available Make Commands**
+## Current Status
 
+### Working
+- Backend API endpoints
+- Database schema and migrations
+- AMI integration with Asterisk
+- Real-time dashboard statistics
+- Basic HTMX template structure
+
+### In Progress
+- Frontend template rendering fixes
+- Navigation between UI sections
+- WebSocket real-time updates
+
+### Planned
+- Operator prefix routing
+- Bulk SIM recharge
+- Voice recognition bot detection
+- YAML-based automation
+- OpenSIPS integration
+
+## Development
+
+### API Endpoints
+- `GET /api/stats` - Dashboard statistics
+- `GET /api/customers` - Customer management
+- `GET /api/modems` - Modem management
+- `GET /api/sims` - SIM card management
+- `GET /api/cdrs` - Call detail records
+
+### Make Commands
 ```bash
-make build          # Build the application
-make run            # Run in development mode
-make migrate-up     # Apply database migrations
-make migrate-down   # Rollback migrations
-make clean          # Clean build artifacts
-make test           # Run tests
+make build       # Build binary
+make run         # Run development server
+make test        # Run tests
+make migrate     # Run database migrations
+make tailwind    # Build Tailwind CSS
+make clean       # Clean build artifacts
 ```
 
-## 📊 **Current Statistics**
+### Testing
+```bash
+# Test API
+curl http://localhost:8080/api/stats
 
-- **Backend**: ~15 API endpoints implemented
-- **Database**: 10 tables with proper relationships
-- **Frontend**: 5 live dashboard cards
-- **Templates**: HTMX-powered responsive UI
-- **Tests**: Ready for implementation
+# Test UI sections
+curl http://localhost:8080/customers
+curl http://localhost:8080/modems
+curl http://localhost:8080/sims
+```
 
-## 🤝 **For Collaborators**
+## Multi-Agent Collaboration
 
-### **Development Workflow**
-1. Clone repository
-2. Set up database (see Quick Start)
-3. Copy `.env.example` to `.env` 
-4. Run `make migrate-up`
-5. Start development with `make run`
+See [CODEBASE_OVERVIEW.md](CODEBASE_OVERVIEW.md) for detailed architecture documentation.
 
-### **Adding New Features**
-1. Create feature branch
-2. Add database migrations if needed
-3. Implement repository layer
-4. Add API handlers
-5. Create/update templates
-6. Test locally
-7. Submit pull request
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
 
-### **Code Standards**
-- Follow Go best practices
-- Use repository pattern for database access
-- HTMX for dynamic frontend updates
-- Tailwind CSS for styling
-- PostgreSQL for data persistence
+### Key Files
+- **Server**: `cmd/server/main.go`
+- **Routes**: Look for `router.GET/POST` in main.go
+- **Templates**: `templates/` directory
+- **Database**: `internal/database/models/`
+- **Config**: `.env` and `pkg/config/`
 
-## 📝 **Recent Achievements**
+### Current Issues
+1. Some templates missing `{{template "base" .}}` directive
+2. Navigation links need fixing
+3. WebSocket handlers not implemented
 
-- ✅ Complete gateway management system
-- ✅ Live dashboard with real-time updates
-- ✅ Database integration and migrations
-- ✅ Asterisk AMI monitoring
-- ✅ HTMX-powered frontend
-- ✅ Clean architecture with repositories
+## License
 
-## 🎯 **Next Sprint Goals**
-
-1. **Authentication System** (Login/logout/sessions)
-2. **Navigation Structure** (Menu/breadcrumbs/routing)
-3. **Customer Management** (CRM functionality)
-4. **User Management** (Admin panel)
-
----
-
-**Status**: ✅ **Production Foundation Ready**  
-**Version**: v0.1.0 (Foundation Complete)  
-**Last Updated**: January 2025
+Private project - All rights reserved
