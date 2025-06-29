@@ -1,0 +1,60 @@
+{
+  "tests": [
+    {
+      "name": "Login Test",
+      "steps": [
+        {
+          "tool": "browser_use",
+          "action": "navigate",
+          "url": "http://192.168.1.35:8080/login"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "wipeLogs"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "takeScreenshot",
+          "save_as": "login-page.png"
+        },
+        {
+          "tool": "browser_use",
+          "action": "fill_and_submit",
+          "task": "Fill username with 'admin', password with 'admin', and click login button"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "getConsoleErrors"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "takeScreenshot",
+          "save_as": "after-login.png"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Test",
+      "steps": [
+        {
+          "tool": "browser_use",
+          "action": "verify",
+          "task": "Verify that 5 stat cards are displayed horizontally in one row"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "getConsoleLogs"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "getNetworkLogs"
+        },
+        {
+          "tool": "browser_tools",
+          "action": "takeScreenshot",
+          "save_as": "dashboard-full.png"
+        }
+      ]
+    }
+  ]
+}
