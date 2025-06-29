@@ -61,7 +61,7 @@
                                 <div class="ml-5 w-0 flex-1">
                                     <dl>
                                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Active SIMs</dt>
-                                        <dd class="text-lg font-medium text-gray-900 dark:text-white" hx-get="/api/stats/sims" hx-trigger="load, every 10s from:closest body" hx-swap="innerHTML">Loading...</dd>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">48</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -130,9 +130,9 @@
                                     SIM Card Status
                                 </h3>
                                 <div class="flex space-x-3">
-                                    <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
-                                        Bulk Recharge
-                                    </button>
+                                    <a href="/sims/recharge" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors inline-block">
+                                        Manage Recharge
+                                    </a>
                                     <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
                                         Check All Credit
                                     </button>

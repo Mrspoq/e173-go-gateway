@@ -275,19 +275,19 @@ func main() {
 	router.GET("/api/stats/cards", func(c *gin.Context) {
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusOK, `
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/modems" hx-trigger="load, every 5s" hx-swap="innerHTML">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/modems" hx-trigger="load, every 5s" hx-swap="innerHTML">
 			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
 		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/sims" hx-trigger="load, every 5s" hx-swap="innerHTML">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/sims" hx-trigger="load, every 5s" hx-swap="innerHTML">
 			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
 		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/calls" hx-trigger="load, every 5s" hx-swap="innerHTML">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/calls" hx-trigger="load, every 3s" hx-swap="innerHTML">
 			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
 		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/spam" hx-trigger="load, every 5s" hx-swap="innerHTML">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/spam" hx-trigger="load, every 10s" hx-swap="innerHTML">
 			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
 		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/gateways" hx-trigger="load, every 5s" hx-swap="innerHTML">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/gateways" hx-trigger="load, every 5s" hx-swap="innerHTML">
 			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
 		</div>`)
 	})
@@ -667,6 +667,7 @@ func main() {
 		v1.PUT("/gateways/:id", gatewayHandler.UpdateGateway)
 		v1.DELETE("/gateways/:id", gatewayHandler.DeleteGateway)
 		v1.POST("/gateways/heartbeat", gatewayHandler.Heartbeat)
+		v1.POST("/gateways/:id/test", gatewayHandler.TestGatewayConnection)
 		
 		// Stats endpoints (called by HTMX stats cards)
 		v1.GET("/stats/modems", statsHandler.GetModemStats)
@@ -734,12 +735,30 @@ func main() {
 			html := ``
 			
 			if len(cdrs) == 0 {
-				html = `<div class="text-center text-gray-500 dark:text-gray-400 p-4">
-					<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-					</svg>
-					No recent calls
-				</div>`
+				html = `
+				<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+					<thead class="bg-gray-50 dark:bg-gray-700">
+						<tr>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Time</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">From → To</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Duration</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Modem</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Recording</th>
+						</tr>
+					</thead>
+					<tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+						<tr>
+							<td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+								<svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+								</svg>
+								<p class="text-lg font-medium">No call records found</p>
+								<p class="mt-1 text-sm">Call records will appear here as calls are made</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>`
 			} else {
 				for _, cdr := range cdrs {
 					disposition := "UNKNOWN"
@@ -1124,6 +1143,9 @@ func main() {
 		
 		// Edit Gateway
 		gatewayUIGroup.GET("/:id/edit", gatewayHandler.GetGatewayEditUI)
+		
+		// Test Gateway
+		gatewayUIGroup.GET("/:id/test", gatewayHandler.GetGatewayTestUI)
 	}
 
 	// Modem Management Frontend Routes

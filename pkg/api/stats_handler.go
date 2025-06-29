@@ -70,15 +70,15 @@ func (h *StatsHandler) GetModemStats(c *gin.Context) {
 
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, `
-	<div class="text-center">
-		<div class="inline-flex items-center justify-center w-10 h-10 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-2">
-			<svg class="w-6 h-6 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+	<div class="text-center h-full flex flex-col justify-center">
+		<div class="inline-flex items-center justify-center w-12 h-12 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-3 mx-auto">
+			<svg class="w-7 h-7 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
 			</svg>
 		</div>
-		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Modems</h3>
-		<p class="mt-1 text-xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(onlineCount)+`/`+strconv.Itoa(total)+`</p>
-		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400">Online</p>
+		<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Modems</h3>
+		<p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">`+strconv.Itoa(onlineCount)+`/`+strconv.Itoa(total)+`</p>
+		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400 mt-1">Online</p>
 	</div>`)
 }
 
@@ -131,24 +131,15 @@ func (h *StatsHandler) GetSIMStats(c *gin.Context) {
 
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, `
-	<div id="sim-balance-card" hx-get="/api/stats/sims" hx-trigger="every 5s" hx-swap="outerHTML" class="dashboard-card">
-		<div class="flex items-center">
-			<div class="flex-shrink-0">
-				<div class="w-8 h-8 bg-`+statusColor+`-100 rounded-md flex items-center justify-center">
-					<svg class="w-5 h-5 text-`+statusColor+`-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-					</svg>
-				</div>
-			</div>
-			<div class="ml-5 w-0 flex-1">
-				<dl>
-					<dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">SIMs Low Balance</dt>
-					<dd class="flex items-baseline">
-						<div class="text-2xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(lowBalanceCount)+`</div>
-					</dd>
-				</dl>
-			</div>
+	<div class="text-center h-full flex flex-col justify-center">
+		<div class="inline-flex items-center justify-center w-12 h-12 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-3 mx-auto">
+			<svg class="w-7 h-7 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+			</svg>
 		</div>
+		<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Low Balance</h3>
+		<p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">`+strconv.Itoa(lowBalanceCount)+`</p>
+		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400 mt-1">SIM Cards</p>
 	</div>`)
 }
 
@@ -215,25 +206,15 @@ func (h *StatsHandler) GetCallStats(c *gin.Context) {
 
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, `
-	<div id="live-calls-card" hx-get="/api/stats/calls" hx-trigger="every 3s" hx-swap="outerHTML" class="dashboard-card">
-		<div class="flex items-center">
-			<div class="flex-shrink-0">
-				<div class="w-8 h-8 bg-`+statusColor+`-100 rounded-md flex items-center justify-center">
-					<svg class="w-5 h-5 text-`+statusColor+`-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-					</svg>
-				</div>
-			</div>
-			<div class="ml-5 w-0 flex-1">
-				<dl>
-					<dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Live Calls</dt>
-					<dd class="flex items-baseline">
-						<div class="text-2xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(activeCalls)+`</div>
-						<div class="ml-2 text-sm text-gray-500 dark:text-gray-400">`+statusText+`</div>
-					</dd>
-				</dl>
-			</div>
+	<div class="text-center h-full flex flex-col justify-center">
+		<div class="inline-flex items-center justify-center w-12 h-12 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-3 mx-auto">
+			<svg class="w-7 h-7 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+			</svg>
 		</div>
+		<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Live Calls</h3>
+		<p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">`+strconv.Itoa(activeCalls)+`</p>
+		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400 mt-1">`+statusText+`</p>
 	</div>`)
 }
 
@@ -326,25 +307,15 @@ func (h *StatsHandler) GetSpamStats(c *gin.Context) {
 
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, `
-	<div id="spam-blocked-card" hx-get="/api/stats/spam" hx-trigger="every 10s" hx-swap="outerHTML" class="dashboard-card">
-		<div class="flex items-center">
-			<div class="flex-shrink-0">
-				<div class="w-8 h-8 bg-`+statusColor+`-100 rounded-md flex items-center justify-center">
-					<svg class="w-5 h-5 text-`+statusColor+`-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
-					</svg>
-				</div>
-			</div>
-			<div class="ml-5 w-0 flex-1">
-				<dl>
-					<dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Potential Spam Today</dt>
-					<dd class="flex items-baseline">
-						<div class="text-2xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(spamCount)+`</div>
-						<div class="ml-2 text-sm text-gray-500 dark:text-gray-400">`+statusText+`</div>
-					</dd>
-				</dl>
-			</div>
+	<div class="text-center h-full flex flex-col justify-center">
+		<div class="inline-flex items-center justify-center w-12 h-12 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-3 mx-auto">
+			<svg class="w-7 h-7 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+			</svg>
 		</div>
+		<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Spam Today</h3>
+		<p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">`+strconv.Itoa(spamCount)+`</p>
+		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400 mt-1">`+statusText+`</p>
 	</div>`)
 }
 
@@ -392,24 +363,14 @@ func (h *StatsHandler) GetGatewayStats(c *gin.Context) {
 
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, `
-	<div id="gateway-stats-card" hx-get="/api/stats/gateways" hx-trigger="every 5s" hx-swap="outerHTML" class="dashboard-card">
-		<div class="flex items-center">
-			<div class="flex-shrink-0">
-				<div class="w-8 h-8 bg-`+statusColor+`-100 rounded-md flex items-center justify-center">
-					<svg class="w-5 h-5 text-`+statusColor+`-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="`+statusIcon+`"></path>
-					</svg>
-				</div>
-			</div>
-			<div class="ml-5 w-0 flex-1">
-				<dl>
-					<dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Gateways</dt>
-					<dd class="flex items-baseline">
-						<div class="text-2xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(online)+` / `+strconv.Itoa(total)+`</div>
-						<div class="ml-2 text-sm text-gray-500 dark:text-gray-400">online</div>
-					</dd>
-				</dl>
-			</div>
+	<div class="text-center h-full flex flex-col justify-center">
+		<div class="inline-flex items-center justify-center w-12 h-12 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-3 mx-auto">
+			<svg class="w-7 h-7 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="`+statusIcon+`"></path>
+			</svg>
 		</div>
+		<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Gateways</h3>
+		<p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">`+strconv.Itoa(online)+`/`+strconv.Itoa(total)+`</p>
+		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400 mt-1">Online</p>
 	</div>`)
 }

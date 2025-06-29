@@ -1,80 +1,80 @@
-# BrowserTools MCP Setup Summary
+# Browser Tools MCP Setup
 
-## Installation Status ✅
-
-The BrowserTools MCP server has been successfully installed and configured:
-
-1. **MCP Server**: Installed at `/root/Cline/MCP/browser-tools-mcp/`
-2. **Configuration**: Added to `cline_mcp_settings.json` with server name: `github.com/AgentDeskAI/browser-tools-mcp`
-3. **Browser Tools Server**: Running on http://localhost:3025
+## Overview
+Browser Tools MCP is a powerful browser monitoring and interaction tool that enables AI-powered applications to capture and analyze browser data through a Chrome extension.
 
 ## Components Installed
 
-### 1. MCP Server (✅ Complete)
-- Location: `/root/Cline/MCP/browser-tools-mcp/`
-- Package: `@agentdeskai/browser-tools-mcp@latest`
-- Status: Installed and configured
+### 1. MCP Server
+- **Status**: ✅ Installed and configured
+- **Command**: `npx @agentdeskai/browser-tools-mcp@latest`
+- **Location**: Running from /root/Cline/MCP
+- **Configuration**: Added to cline_mcp_settings.json
 
-### 2. Browser Tools Server (✅ Running)
-- Port: 3025
-- URL: http://localhost:3025
-- Network addresses:
-  - http://192.168.1.35:3025
-  - http://localhost:3025
+### 2. Browser Tools Server (Middleware)
+- **Status**: ✅ Running
+- **Port**: 3025
+- **URL**: http://localhost:3025
+- **Purpose**: Acts as middleware between Chrome extension and MCP server
 
-### 3. Chrome Extension (⏳ Pending)
-You need to manually install the Chrome extension:
-- Download from: https://github.com/AgentDeskAI/browser-tools-mcp/releases/download/v1.2.0/BrowserTools-1.2.0-extension.zip
-- Extract the ZIP file
-- Open Chrome and go to `chrome://extensions/`
-- Enable "Developer mode"
-- Click "Load unpacked" and select the extracted folder
+### 3. Chrome Extension
+- **Status**: ✅ Downloaded and extracted
+- **Version**: v1.2.0
+- **Location**: `/root/Cline/MCP/BrowserTools-extension/chrome-extension/`
+- **Download URL**: https://github.com/AgentDeskAI/browser-tools-mcp/releases/download/v1.2.0/BrowserTools-1.2.0-extension.zip
+
+## Available Tools
+
+Once the Chrome extension is installed and connected, the following tools will be available:
+
+1. **getConsoleLogs** - Check browser console logs
+2. **getConsoleErrors** - Check browser console errors
+3. **getNetworkErrors** - Check network error logs
+4. **getNetworkLogs** - Check all network logs
+5. **takeScreenshot** - Take a screenshot of the current browser tab
+6. **getSelectedElement** - Get the selected element from the browser
+7. **wipeLogs** - Clear all browser logs from memory
+8. **runAccessibilityAudit** - Run accessibility audit on current page
+9. **runPerformanceAudit** - Run performance audit on current page
+10. **runSEOAudit** - Run SEO audit on current page
+11. **runNextJSAudit** - Run NextJS-specific audit
+12. **runDebuggerMode** - Run debugging tools in sequence
+13. **runAuditMode** - Run all audit tools in sequence
+14. **runBestPracticesAudit** - Run best practices audit
 
 ## Next Steps
 
-1. **Install Chrome Extension** (see instructions above)
-2. **Restart VSCode/Cursor** to load the new MCP server configuration
-3. **Open Chrome DevTools** and look for the BrowserToolsMCP panel
-4. **Test the integration** - The tools will be available after restart
-
-## Available Tools (After Restart)
-
-Once fully configured, you'll have access to:
-- `captureScreenshot` - Take screenshots of web pages
-- `getConsoleLogs` - Monitor browser console output
-- `getNetworkData` - Track network requests
-- `getCurrentElement` - Analyze selected DOM elements
-- `clearLogs` - Clear stored logs
-- `runAccessibilityAudit` - Check WCAG compliance
-- `runPerformanceAudit` - Analyze page performance
-- `runSEOAudit` - Evaluate SEO factors
-- `runBestPracticesAudit` - Check web best practices
-- `runNextJSAudit` - NextJS-specific audits
-- `runAuditMode` - Run all audits in sequence
-- `runDebuggerMode` - Run all debugging tools
-
-## Configuration Details
-
-Your `cline_mcp_settings.json` now includes:
-```json
-"github.com/AgentDeskAI/browser-tools-mcp": {
-  "command": "node",
-  "args": ["/root/Cline/MCP/browser-tools-mcp/node_modules/@agentdeskai/browser-tools-mcp/dist/index.js"],
-  "env": {}
-}
-```
+1. ✅ Chrome extension downloaded
+2. ✅ Extension unzipped to `/root/Cline/MCP/BrowserTools-extension/chrome-extension/`
+3. Install the extension in Chrome:
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked"
+   - Select the unzipped extension folder
+4. Open Chrome DevTools and access the BrowserToolsMCP panel
+5. The extension should automatically connect to the running servers
 
 ## Troubleshooting
 
-If you encounter issues:
-1. Make sure Chrome extension is installed and enabled
-2. Ensure only ONE Chrome DevTools instance is open
-3. Restart Chrome completely (not just the window)
-4. Check that the Browser Tools Server is running on port 3025
-5. Restart your IDE after configuration changes
+If connection issues occur:
+- Ensure only ONE Chrome DevTools panel is open
+- Restart the browser-tools-server
+- Check that both servers are running
+- Verify the Chrome extension is enabled
 
-## Important Notes
+## Configuration
 
-- The Browser Tools Server (running on port 3025) needs to stay running
-- All logs are stored locally and never sent to third-party services
-- The system works by connecting the Chrome extension → Browser Tools Server → MCP Server → Your IDE
+The MCP server has been configured in:
+`/root/.vscode-server/data/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+
+```json
+{
+  "mcpServers": {
+    "github.com/AgentDeskAI/browser-tools-mcp": {
+      "command": "npx",
+      "args": ["@agentdeskai/browser-tools-mcp@latest"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

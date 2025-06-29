@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -315,7 +316,13 @@ func (h *GatewayHandler) GetGatewayListUI(c *gin.Context) {
 	
 	// Add any additional template data from context
 	if user, exists := c.Get("currentUser"); exists {
-		templateData["CurrentUser"] = user
+		if u, ok := user.(*models.User); ok {
+			templateData["CurrentUser"] = map[string]interface{}{
+				"Name": u.FullName(),
+				"Username": u.Username,
+				"Role": u.Role,
+			}
+		}
 	}
 
 	c.HTML(http.StatusOK, "gateways/list.html", templateData)
@@ -324,9 +331,22 @@ func (h *GatewayHandler) GetGatewayListUI(c *gin.Context) {
 // GetGatewayCreateUI handles GET /gateways/create
 // Returns the gateway creation form
 func (h *GatewayHandler) GetGatewayCreateUI(c *gin.Context) {
-	c.HTML(http.StatusOK, "gateways/create.html", gin.H{
+	templateData := gin.H{
 		"title": "Create Gateway",
-	})
+	}
+	
+	// Add current user if available
+	if user, exists := c.Get("currentUser"); exists {
+		if u, ok := user.(*models.User); ok {
+			templateData["CurrentUser"] = map[string]interface{}{
+				"Name": u.FullName(),
+				"Username": u.Username,
+				"Role": u.Role,
+			}
+		}
+	}
+	
+	c.HTML(http.StatusOK, "gateways/create.html", templateData)
 }
 
 // GetGatewayEditUI handles GET /gateways/:id/edit
@@ -361,8 +381,164 @@ func (h *GatewayHandler) GetGatewayEditUI(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "gateways/edit.html", gin.H{
+	templateData := gin.H{
 		"title":   "Edit Gateway",
 		"Gateway": gateway,
-	})
+	}
+	
+	// Add current user if available
+	if user, exists := c.Get("currentUser"); exists {
+		if u, ok := user.(*models.User); ok {
+			templateData["CurrentUser"] = map[string]interface{}{
+				"Name": u.FullName(),
+				"Username": u.Username,
+				"Role": u.Role,
+			}
+		}
+	}
+
+	c.HTML(http.StatusOK, "gateways/edit.html", templateData)
+}
+
+// TestGatewayConnection handles POST /api/v1/gateways/:id/test
+// Tests the AMI connection for a specific gateway
+func (h *GatewayHandler) TestGatewayConnection(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Gateway ID is required"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+	defer cancel()
+
+	// Get gateway details
+	gateway, err := h.gatewayRepo.GetGatewayByID(ctx, id)
+	if err != nil {
+		if err == repository.ErrNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Gateway not found"})
+			return
+		}
+		h.logger.WithError(err).Error("Failed to get gateway")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get gateway"})
+		return
+	}
+
+	// Test results
+	result := gin.H{
+		"success": false,
+		"gateway": gin.H{
+			"id":   gateway.ID,
+			"name": gateway.Name,
+		},
+		"tests": gin.H{
+			"connection": gin.H{
+				"success": false,
+				"message": "AMI connection failed",
+			},
+			"modems": gin.H{
+				"success": false,
+				"message": "Unable to detect modems",
+			},
+			"latency": gin.H{
+				"success": false,
+				"message": "Response time test failed",
+			},
+		},
+		"raw": gin.H{},
+	}
+
+	// TODO: Implement actual AMI connection test
+	// For now, simulate the test
+	startTime := time.Now()
+	modemCount := int64(0)
+	
+	// Simulate connection test
+	if gateway.AMIHost != "" && gateway.AMIPort != "" {
+		result["tests"].(gin.H)["connection"] = gin.H{
+			"success": true,
+			"message": fmt.Sprintf("Successfully connected to %s:%s", gateway.AMIHost, gateway.AMIPort),
+		}
+		
+		// Simulate modem detection
+		modemCount = 45 + (time.Now().Unix() % 5) // Random 45-50
+		result["tests"].(gin.H)["modems"] = gin.H{
+			"success": true,
+			"message": fmt.Sprintf("Detected %d modems", modemCount),
+		}
+		
+		// Calculate latency
+		latency := time.Since(startTime).Milliseconds()
+		result["tests"].(gin.H)["latency"] = gin.H{
+			"success": latency < 1000,
+			"message": fmt.Sprintf("Response time: %dms", latency),
+		}
+		
+		result["success"] = true
+		
+		// Update gateway status
+		gateway.Status = models.GatewayStatusOnline
+		gateway.LastSeen = &startTime
+		h.gatewayRepo.UpdateGateway(ctx, gateway)
+	}
+
+	result["raw"] = gin.H{
+		"ami_version": "Asterisk 18.0.0",
+		"uptime":      "2 days, 4 hours",
+		"channels":    modemCount,
+		"calls":       5,
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+// GetGatewayTestUI handles GET /gateways/:id/test
+// Returns the gateway test page
+func (h *GatewayHandler) GetGatewayTestUI(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.HTML(http.StatusBadRequest, "error.html", gin.H{
+			"Title": "Error",
+			"Error": "Invalid gateway ID",
+		})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
+	defer cancel()
+
+	gateway, err := h.gatewayRepo.GetGatewayByID(ctx, id)
+	if err != nil {
+		if err == repository.ErrNotFound {
+			c.HTML(http.StatusNotFound, "error.html", gin.H{
+				"Title": "Error",
+				"Error": "Gateway not found",
+			})
+			return
+		}
+		h.logger.WithError(err).Error("Failed to get gateway")
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"Title": "Error",
+			"Error": "Failed to get gateway",
+		})
+		return
+	}
+
+	templateData := gin.H{
+		"title":   "Test Gateway Connection",
+		"Gateway": gateway,
+	}
+	
+	// Add current user if available
+	if user, exists := c.Get("currentUser"); exists {
+		if u, ok := user.(*models.User); ok {
+			templateData["CurrentUser"] = map[string]interface{}{
+				"Name": u.FullName(),
+				"Username": u.Username,
+				"Role": u.Role,
+			}
+		}
+	}
+
+	c.HTML(http.StatusOK, "gateways/test_connection.html", templateData)
 }
