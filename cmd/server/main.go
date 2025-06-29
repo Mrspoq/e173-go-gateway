@@ -274,21 +274,26 @@ func main() {
 	// HTMX Stats Cards partial - Let each card load individually  
 	router.GET("/api/stats/cards", func(c *gin.Context) {
 		c.Header("Content-Type", "text/html")
+		c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
+		c.Header("Pragma", "no-cache")
+		c.Header("Expires", "0")
 		c.String(http.StatusOK, `
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/modems" hx-trigger="load, every 5s" hx-swap="innerHTML">
-			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
-		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/sims" hx-trigger="load, every 5s" hx-swap="innerHTML">
-			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
-		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/calls" hx-trigger="load, every 3s" hx-swap="innerHTML">
-			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
-		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/spam" hx-trigger="load, every 10s" hx-swap="innerHTML">
-			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
-		</div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/gateways" hx-trigger="load, every 5s" hx-swap="innerHTML">
-			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+			<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/modems" hx-trigger="load, every 5s" hx-swap="innerHTML">
+				<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+			</div>
+			<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/sims" hx-trigger="load, every 5s" hx-swap="innerHTML">
+				<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+			</div>
+			<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/calls" hx-trigger="load, every 3s" hx-swap="innerHTML">
+				<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+			</div>
+			<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/spam" hx-trigger="load, every 10s" hx-swap="innerHTML">
+				<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+			</div>
+			<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/stats/gateways" hx-trigger="load, every 5s" hx-swap="innerHTML">
+				<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+			</div>
 		</div>`)
 	})
 

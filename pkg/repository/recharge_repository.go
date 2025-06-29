@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
+	_ "time"
 
 	"github.com/e173-gateway/e173_go_gateway/pkg/models"
 	"github.com/jmoiron/sqlx"
@@ -287,6 +287,6 @@ func (r *rechargeRepository) GetSimCardsForAutoRecharge(ctx context.Context, thr
 		AND (last_recharge_at IS NULL OR last_recharge_at < NOW() - INTERVAL '1 hour')
 		ORDER BY balance ASC`
 	
-	err := r.db.SelectContext(ctx, &sims, query, models.SIMStatusActive)
+	err := r.db.SelectContext(ctx, &sims, query, "active")
 	return sims, err
 }

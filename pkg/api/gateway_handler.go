@@ -314,15 +314,20 @@ func (h *GatewayHandler) GetGatewayListUI(c *gin.Context) {
 		"Gateways": gateways,
 	}
 	
-	// Add any additional template data from context
+	// Add current user if available
 	if user, exists := c.Get("currentUser"); exists {
-		if u, ok := user.(*models.User); ok {
+		if u, ok := user.(*models.User); ok && u != nil {
 			templateData["CurrentUser"] = map[string]interface{}{
 				"Name": u.FullName(),
 				"Username": u.Username,
 				"Role": u.Role,
 			}
+			h.logger.Infof("Set CurrentUser: %s", u.FullName())
+		} else {
+			h.logger.Warn("CurrentUser exists but is not a valid User model or is nil")
 		}
+	} else {
+		h.logger.Warn("No currentUser in context for gateway list")
 	}
 
 	c.HTML(http.StatusOK, "gateways/list.html", templateData)

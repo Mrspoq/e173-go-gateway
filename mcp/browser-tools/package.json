@@ -1,0 +1,14 @@
+{
+  "name": "e173-browser-tools-mcp",
+  "version": "1.0.0",
+  "description": "Browser Tools MCP setup for E173 Gateway UI testing",
+  "scripts": {
+    "start-server": "npx @agentdeskai/browser-tools-server@latest",
+    "start-mcp": "npx @agentdeskai/browser-tools-mcp@latest",
+    "test-ui": "node test-ui.js"
+  },
+  "dependencies": {
+    "@agentdeskai/browser-tools-server": "latest",
+    "@agentdeskai/browser-tools-mcp": "latest"
+  }
+}

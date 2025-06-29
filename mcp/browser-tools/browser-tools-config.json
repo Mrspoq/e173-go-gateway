@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "browser-tools": {
+      "command": "npx",
+      "args": ["@agentdeskai/browser-tools-mcp@latest"],
+      "env": {
+        "BROWSER_TOOLS_SERVER_URL": "http://localhost:3000",
+        "LOG_LEVEL": "debug"
+      }
+    }
+  }
+}
