@@ -1,450 +1,202 @@
 {{template "base" .}}
 
-{{define "title"}}SIM Recharge{{end}}
+{{define "title"}}{{.title}}{{end}}
 
 {{define "content"}}
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">SIM Card Recharge</h1>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Manage recharge codes and perform bulk top-ups for SIM cards
-        </p>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Low Balance SIMs</h3>
-            <p class="mt-2 text-3xl font-bold text-red-600 dark:text-red-400">{{.LowBalanceCount}}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Below $5</p>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                Recharge SIM Card
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
+                ICCID: {{.SIMCard.ICCID}}
+                {{if .SIMCard.MSISDN.Valid}} | Phone: {{.SIMCard.MSISDN.String}}{{end}}
+            </p>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending Codes</h3>
-            <p class="mt-2 text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{.PendingCodes}}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ready to use</p>
-        </div>
-        
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Today's Recharges</h3>
-            <p class="mt-2 text-3xl font-bold text-green-600 dark:text-green-400">{{.TodayRecharges}}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${{.TodayAmount}}</p>
-        </div>
-        
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Auto-Recharge</h3>
-            <p class="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">{{.AutoRechargeEnabled}}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enabled SIMs</p>
-        </div>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div class="border-b border-gray-200 dark:border-gray-700">
-            <nav class="-mb-px flex">
-                <button class="tab-button border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400 py-4 px-6 text-sm font-medium"
-                        onclick="showTab('manual-recharge')">
-                    Manual Recharge
-                </button>
-                <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 py-4 px-6 text-sm font-medium"
-                        onclick="showTab('bulk-upload')">
-                    Bulk Upload
-                </button>
-                <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 py-4 px-6 text-sm font-medium"
-                        onclick="showTab('auto-recharge')">
-                    Auto-Recharge Settings
-                </button>
-                <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 py-4 px-6 text-sm font-medium"
-                        onclick="showTab('history')">
-                    History
-                </button>
-            </nav>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="p-6">
-            <!-- Manual Recharge Tab -->
-            <div id="manual-recharge" class="tab-content">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Manual SIM Recharge</h3>
-                
-                <form id="manual-recharge-form" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Select SIM Card
-                            </label>
-                            <select name="sim_card_id" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                <option value="">Choose a SIM...</option>
-                                {{range .SIMCards}}
-                                <option value="{{.ID}}">{{.PhoneNumber}} - {{.Operator}} (Balance: ${{.Balance.Float64}})</option>
-                                {{end}}
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Recharge Code
-                            </label>
-                            <input type="text" name="recharge_code" required
-                                   placeholder="Enter recharge code"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Amount
-                            </label>
-                            <select name="amount" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                <option value="5">$5</option>
-                                <option value="10">$10</option>
-                                <option value="20">$20</option>
-                                <option value="50">$50</option>
-                                <option value="100">$100</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Method
-                            </label>
-                            <select name="method"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                <option value="ussd">USSD (*123#)</option>
-                                <option value="sms">SMS</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end">
-                        <button type="submit"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Recharge Now
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Recharge Result -->
-                <div id="recharge-result" class="mt-6 hidden"></div>
-            </div>
-
-            <!-- Bulk Upload Tab -->
-            <div id="bulk-upload" class="tab-content hidden">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Bulk Code Upload</h3>
-                
-                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 mb-6">
-                    <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">CSV Format</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        Upload a CSV file with the following columns:
-                    </p>
-                    <code class="block bg-gray-100 dark:bg-gray-800 p-3 rounded text-xs">
-                        phone_number,recharge_code,amount,operator,expiry_date
-                    </code>
+        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Current Balance
+                    </dt>
+                    <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                        {{if .SIMCard.Balance.Valid}}
+                            {{.SIMCard.Balance.Float64 | printf "%.2f"}}
+                            {{if .SIMCard.BalanceCurrency.Valid}}{{.SIMCard.BalanceCurrency.String}}{{end}}
+                        {{else}}
+                            N/A
+                        {{end}}
+                    </dd>
                 </div>
-                
-                <form id="bulk-upload-form" enctype="multipart/form-data">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            CSV File
-                        </label>
-                        <input type="file" name="csv_file" accept=".csv" required
-                               class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400
-                                      file:mr-4 file:py-2 file:px-4
-                                      file:rounded-md file:border-0
-                                      file:text-sm file:font-medium
-                                      file:bg-indigo-50 file:text-indigo-700
-                                      hover:file:bg-indigo-100">
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Batch Name
-                        </label>
-                        <input type="text" name="batch_name" required
-                               placeholder="e.g., MTN Codes January 2025"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                    </div>
-                    
-                    <div class="flex justify-end">
-                        <button type="submit"
-                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                            Upload Codes
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Upload Progress -->
-                <div id="upload-progress" class="mt-6 hidden">
-                    <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                    </div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        Processing... <span id="progress-text">0%</span>
-                    </p>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Operator
+                    </dt>
+                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                        {{if .SIMCard.OperatorName.Valid}}{{.SIMCard.OperatorName.String}}{{else}}Unknown{{end}}
+                    </dd>
                 </div>
-            </div>
-
-            <!-- Auto-Recharge Settings Tab -->
-            <div id="auto-recharge" class="tab-content hidden">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Auto-Recharge Configuration</h3>
+            </dl>
+        </div>
+        
+        <!-- Recharge Form -->
+        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
+            <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">Add Credit</h4>
+            
+            <form id="recharge-form" hx-post="/api/v1/sims/{{.SIMCard.ID}}/recharge" 
+                  hx-trigger="submit" 
+                  hx-swap="none"
+                  hx-on::after-request="handleRechargeResponse(event)">
                 
-                <div class="space-y-6">
-                    <!-- Global Settings -->
-                    <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-6">
-                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-4">Global Settings</h4>
-                        
-                        <div class="space-y-4">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="global-auto-recharge" checked
-                                       class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
-                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                                    Enable auto-recharge system
-                                </span>
-                            </label>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Default Threshold
-                                    </label>
-                                    <input type="number" value="5" min="1" max="100"
-                                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Default Amount
-                                    </label>
-                                    <input type="number" value="10" min="5" max="200"
-                                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Per-SIM Settings -->
+                <div class="space-y-4">
                     <div>
-                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-4">Per-SIM Configuration</h4>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                            Phone Number
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                            Enabled
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                            Threshold
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                            Amount
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody id="auto-recharge-list" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <!-- Dynamic content -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Recharge Code (Optional)
+                        </label>
+                        <input type="text" name="code" id="code"
+                               class="mt-1 block w-full shadow-sm sm:text-sm rounded-md
+                                      border-gray-300 dark:border-gray-600 
+                                      dark:bg-gray-700 dark:text-white
+                                      focus:ring-indigo-500 focus:border-indigo-500"
+                               placeholder="Enter recharge code">
+                    </div>
+                    
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Amount (if no code)
+                        </label>
+                        <input type="number" name="amount" id="amount" step="0.01" min="0"
+                               class="mt-1 block w-full shadow-sm sm:text-sm rounded-md
+                                      border-gray-300 dark:border-gray-600 
+                                      dark:bg-gray-700 dark:text-white
+                                      focus:ring-indigo-500 focus:border-indigo-500"
+                               placeholder="0.00">
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent 
+                                       text-sm font-medium rounded-md shadow-sm text-white 
+                                       bg-indigo-600 hover:bg-indigo-700 focus:outline-none 
+                                       focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Recharge
+                        </button>
                     </div>
                 </div>
+            </form>
+        </div>
+        
+        <!-- Recharge History -->
+        <div class="border-t border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-5 sm:px-6">
+                <h4 class="text-md font-medium text-gray-900 dark:text-white">Recharge History</h4>
             </div>
-
-            <!-- History Tab -->
-            <div id="history" class="tab-content hidden">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Recharge History</h3>
-                
-                <!-- Filters -->
-                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-900">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Date
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Amount
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Balance Before
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Balance After
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Status
-                            </label>
-                            <select id="history-status"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                <option value="">All</option>
-                                <option value="success">Success</option>
-                                <option value="failed">Failed</option>
-                                <option value="pending">Pending</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Date Range
-                            </label>
-                            <select id="history-range"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                                <option value="today">Today</option>
-                                <option value="week">Last 7 days</option>
-                                <option value="month">Last 30 days</option>
-                                <option value="all">All time</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Phone Number
-                            </label>
-                            <input type="text" id="history-phone" placeholder="Filter by phone"
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm">
-                        </div>
-                        
-                        <div class="flex items-end">
-                            <button onclick="loadHistory()"
-                                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                Filter
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- History Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                    Time
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                    Phone Number
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                    Amount
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                    Balance
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                    Method
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                    Status
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-list" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            <!-- Dynamic content -->
-                        </tbody>
-                    </table>
-                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        {{range .History}}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{.ProcessedAt.Format "2006-01-02 15:04"}}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{.Amount | printf "%.2f"}}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {{if .BalanceBefore.Valid}}{{.BalanceBefore.Float64 | printf "%.2f"}}{{else}}N/A{{end}}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {{if .BalanceAfter.Valid}}{{.BalanceAfter.Float64 | printf "%.2f"}}{{else}}N/A{{end}}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{if eq .Status "completed"}}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    Completed
+                                </span>
+                                {{else if eq .Status "failed"}}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                    Failed
+                                </span>
+                                {{else}}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                    {{.Status}}
+                                </span>
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{else}}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                No recharge history available
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Tab switching
-function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.add('hidden');
-    });
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('border-indigo-500', 'text-indigo-600', 'dark:text-indigo-400');
-        button.classList.add('border-transparent', 'text-gray-500');
-    });
-    
-    document.getElementById(tabName).classList.remove('hidden');
-    event.target.classList.remove('border-transparent', 'text-gray-500');
-    event.target.classList.add('border-indigo-500', 'text-indigo-600', 'dark:text-indigo-400');
-}
-
-// Manual recharge form
-document.getElementById('manual-recharge-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-    
-    try {
-        const response = await fetch('/api/v1/sims/recharge', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        const resultDiv = document.getElementById('recharge-result');
-        
-        if (response.ok) {
-            resultDiv.className = 'mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded-lg';
-            resultDiv.innerHTML = `
-                <h4 class="text-sm font-medium text-green-800 dark:text-green-200">Recharge Successful!</h4>
-                <p class="text-sm text-green-700 dark:text-green-300 mt-1">
-                    Balance updated: $${result.balance_before} → $${result.balance_after}
-                </p>
+function handleRechargeResponse(event) {
+    if (event.detail.successful) {
+        const response = JSON.parse(event.detail.xhr.responseText);
+        if (response.success) {
+            // Show success notification
+            const notification = document.createElement('div');
+            notification.className = 'mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative';
+            notification.innerHTML = `
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">${response.message}. New balance: ${response.balance.toFixed(2)}</span>
             `;
-        } else {
-            resultDiv.className = 'mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg';
-            resultDiv.innerHTML = `
-                <h4 class="text-sm font-medium text-red-800 dark:text-red-200">Recharge Failed</h4>
-                <p class="text-sm text-red-700 dark:text-red-300 mt-1">${result.error}</p>
-            `;
+            document.getElementById('notifications').appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => notification.remove(), 5000);
+            
+            // Reset form
+            document.getElementById('recharge-form').reset();
+            
+            // Reload page to update balance and history
+            setTimeout(() => location.reload(), 1000);
         }
+    } else {
+        // Show error notification
+        const error = event.detail.xhr.responseJSON?.error || 'Failed to process recharge';
+        const notification = document.createElement('div');
+        notification.className = 'mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative';
+        notification.innerHTML = `
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">${error}</span>
+        `;
+        document.getElementById('notifications').appendChild(notification);
         
-        resultDiv.classList.remove('hidden');
-    } catch (error) {
-        console.error('Recharge error:', error);
-    }
-});
-
-// Load history
-async function loadHistory() {
-    const status = document.getElementById('history-status').value;
-    const range = document.getElementById('history-range').value;
-    const phone = document.getElementById('history-phone').value;
-    
-    try {
-        const params = new URLSearchParams({ status, range, phone });
-        const response = await fetch(`/api/v1/sims/recharge/history?${params}`);
-        const data = await response.json();
-        
-        const tbody = document.getElementById('history-list');
-        tbody.innerHTML = data.history.map(h => `
-            <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    ${new Date(h.processed_at).toLocaleString()}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    ${h.phone_number}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    $${h.amount}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    $${h.balance_before || '-'} → $${h.balance_after || '-'}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    ${h.method.toUpperCase()}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                 ${h.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                        ${h.status}
-                    </span>
-                </td>
-            </tr>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading history:', error);
+        // Remove notification after 5 seconds
+        setTimeout(() => notification.remove(), 5000);
     }
 }
-
-// Load history on page load
-loadHistory();
 </script>
 {{end}}

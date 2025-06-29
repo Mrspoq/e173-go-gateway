@@ -136,11 +136,19 @@ func main() {
 		cacheService = cache.NewCacheService(redisClient)
 	}
 
+	// Create sqlx adapter for repositories that need it
+	sqlxDB, err := adapter.CreateSQLXAdapter(dbPool)
+	if err != nil {
+		logging.Logger.Fatalf("Failed to create sqlx adapter: %v", err)
+	}
+	defer adapter.CloseAdapter(sqlxDB) // Ensure adapter is closed on shutdown
+
 	// Initialize repositories
 	modemRepo := repository.NewPostgresModemRepository(dbPool)
 	simCardRepo := repository.NewPostgresSIMCardRepository(dbPool)
 	cdrRepo := repository.NewPostgresCdrRepository(dbPool) // Initialize CDR Repository
 	gatewayRepo := repository.NewPostgresGatewayRepository(dbPool)
+	rechargeRepo := repository.NewRechargeRepository(sqlxDB)
 	
 	// Initialize JWT service
 	var jwtService *auth.JWTService
@@ -162,13 +170,6 @@ func main() {
 	jwtService = auth.NewJWTService(cfg.JWTSecret, tokenExpiry, refreshExpiry)
 	logging.Logger.Info("JWT authentication service initialized")
 	
-	// Create sqlx adapter for enterprise repositories
-	sqlxDB, err := adapter.CreateSQLXAdapter(dbPool)
-	if err != nil {
-		logging.Logger.Fatalf("Failed to create sqlx adapter: %v", err)
-	}
-	defer adapter.CloseAdapter(sqlxDB) // Ensure adapter is closed on shutdown
-	
 	// Initialize enterprise repositories
 	userRepo := enterpriseRepo.NewPostgresUserRepository(dbPool) // User repo uses pgxpool directly
 	customerRepo := enterpriseRepo.NewPostgresCustomerRepository(sqlxDB)
@@ -179,6 +180,7 @@ func main() {
 	simAPIHandler := simhandler.NewSIMCardHandler(simCardRepo)
 	statsHandler := simhandler.NewStatsHandler(modemRepo, simCardRepo, cdrRepo, gatewayRepo, logging.Logger)
 	gatewayHandler := simhandler.NewGatewayHandler(gatewayRepo, logging.Logger)
+	rechargeHandler := simhandler.NewRechargeHandler(rechargeRepo, simCardRepo, logging.Logger.WithField("component", "recharge"))
 	
 	// Initialize enterprise services
 	authService := service.NewPostgresAuthService(userRepo, systemRepo)
@@ -645,6 +647,70 @@ func main() {
 		})
 		v1.PUT("/simcards/:id", simAPIHandler.UpdateSIMCard) // New route for updating a SIM
 		v1.DELETE("/simcards/:id", simAPIHandler.DeleteSIMCard) // New route for deleting a SIM
+		v1.GET("/simcards/:id/balance", func(c *gin.Context) {
+			idStr := c.Param("id")
+			id, err := strconv.ParseInt(idStr, 10, 64)
+			if err != nil {
+				c.String(http.StatusBadRequest, "Invalid ID")
+				return
+			}
+			
+			sim, err := simCardRepo.GetSIMCardByID(c.Request.Context(), id)
+			if err != nil {
+				c.String(http.StatusNotFound, "SIM not found")
+				return
+			}
+			
+			// Return just the balance as HTML for HTMX
+			if sim.Balance.Valid {
+				balance := fmt.Sprintf("%.2f", sim.Balance.Float64)
+				if sim.BalanceCurrency.Valid {
+					balance += " " + sim.BalanceCurrency.String
+				}
+				c.String(http.StatusOK, balance)
+			} else {
+				c.String(http.StatusOK, "N/A")
+			}
+		})
+
+		// Recharge API endpoints
+		v1.POST("/recharge/codes", rechargeHandler.CreateRechargeCode)
+		v1.POST("/sims/:id/recharge", rechargeHandler.RechargeSimCard)
+		v1.GET("/sims/:id/recharge/history", rechargeHandler.GetRechargeHistory)
+
+		// Active calls endpoint
+		v1.GET("/calls/active", func(c *gin.Context) {
+			// Return active calls HTML for HTMX
+			// In real implementation, this would query Asterisk for active channels
+			c.Header("Content-Type", "text/html")
+			c.String(http.StatusOK, `
+			<div class="space-y-2">
+				<div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="text-sm font-medium text-gray-900 dark:text-white">+212612345678 → +212620987654</p>
+							<p class="text-xs text-gray-500 dark:text-gray-400">Duration: 02:45</p>
+						</div>
+						<div class="flex items-center space-x-1">
+							<div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+							<span class="text-xs text-red-600 dark:text-red-400">Active</span>
+						</div>
+					</div>
+				</div>
+				<div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="text-sm font-medium text-gray-900 dark:text-white">+212700123456 → +212661234567</p>
+							<p class="text-xs text-gray-500 dark:text-gray-400">Duration: 00:15</p>
+						</div>
+						<div class="flex items-center space-x-1">
+							<div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+							<span class="text-xs text-red-600 dark:text-red-400">Active</span>
+						</div>
+					</div>
+				</div>
+			</div>`)
+		})
 
 		// Enterprise API endpoints
 		v1.POST("/enterprises", handlers.WrapHandler(customerHandlers.CreateCustomer))
@@ -868,6 +934,7 @@ func main() {
 				<tr>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Customer</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Balance</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Calls Today</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
@@ -881,6 +948,9 @@ func main() {
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap">
 						<span class="text-sm text-gray-900 dark:text-white">$2,450.00</span>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+						<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">Postpaid</span>
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap">
 						<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</span>
@@ -897,6 +967,9 @@ func main() {
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap">
 						<span class="text-sm text-gray-900 dark:text-white">$125.50</span>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+						<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">Prepaid</span>
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap">
 						<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Low Balance</span>
@@ -1171,6 +1244,9 @@ func main() {
 		simUIGroup.GET("", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "sims_standalone.tmpl", getTemplateData(c, "SIM Card Management"))
 		})
+		
+		// SIM Recharge
+		simUIGroup.GET("/:id/recharge", rechargeHandler.GetRechargeUI)
 	}
 
 	// CDR Frontend Routes

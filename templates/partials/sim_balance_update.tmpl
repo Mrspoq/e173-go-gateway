@@ -1,0 +1,12 @@
+{{if .Balance.Valid}}
+<span id="sim-balance-{{.ID}}" 
+      class="font-semibold"
+      hx-get="/api/v1/simcards/{{.ID}}/balance"
+      hx-trigger="every 30s"
+      hx-swap="innerHTML">
+    {{.Balance.Float64 | printf "%.2f"}}
+    {{if .BalanceCurrency.Valid}}{{.BalanceCurrency.String}}{{end}}
+</span>
+{{else}}
+<span class="text-gray-400">N/A</span>
+{{end}}

@@ -7,7 +7,17 @@
         {{.Operator}}
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        R {{printf "%.2f" .Balance}}
+        {{if .Balance.Valid}}
+        <span id="sim-balance-{{.ID}}" 
+              hx-get="/api/v1/simcards/{{.ID}}/balance"
+              hx-trigger="every 30s"
+              hx-swap="innerHTML">
+            {{.Balance.Float64 | printf "%.2f"}}
+            {{if .BalanceCurrency.Valid}} {{.BalanceCurrency.String}}{{end}}
+        </span>
+        {{else}}
+        <span class="text-gray-400">N/A</span>
+        {{end}}
     </td>
     <td class="px-6 py-4 whitespace-nowrap">
         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -22,10 +32,16 @@
         {{if .ModemID}}Modem #{{.ModemID}}{{else}}-{{end}}
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <a href="#" hx-get="/sims/{{.ID}}/edit" hx-target="#modal" 
-           class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
-            Edit
-        </a>
+        <div class="flex justify-end space-x-3">
+            <a href="/sims/{{.ID}}/recharge" 
+               class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                Recharge
+            </a>
+            <a href="#" hx-get="/sims/{{.ID}}/edit" hx-target="#modal" 
+               class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                Edit
+            </a>
+        </div>
     </td>
 </tr>
 {{else}}

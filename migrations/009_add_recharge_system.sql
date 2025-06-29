@@ -93,8 +93,8 @@ ALTER TABLE sim_cards ADD COLUMN IF NOT EXISTS total_recharged DECIMAL(10,2) DEF
 CREATE OR REPLACE VIEW recharge_stats AS
 SELECT 
     s.id as sim_card_id,
-    s.phone_number,
-    s.operator,
+    s.msisdn as phone_number,
+    s.operator_name as operator,
     COUNT(rh.id) as total_recharges,
     SUM(CASE WHEN rh.status = 'success' THEN 1 ELSE 0 END) as successful_recharges,
     SUM(CASE WHEN rh.status = 'failed' THEN 1 ELSE 0 END) as failed_recharges,
@@ -102,7 +102,7 @@ SELECT
     MAX(rh.processed_at) as last_recharge_date
 FROM sim_cards s
 LEFT JOIN recharge_history rh ON s.id = rh.sim_card_id
-GROUP BY s.id, s.phone_number, s.operator;
+GROUP BY s.id, s.msisdn, s.operator_name;
 
 -- Sample data for testing
 INSERT INTO recharge_batches (name, description, created_by) 

@@ -1,0 +1,102 @@
+{
+  "timestamp": "2025-06-29T16:58:44.975021",
+  "tests": [
+    {
+      "page": "Login",
+      "status": "failed",
+      "url": "http://192.168.1.35:8080/"
+    },
+    {
+      "page": "Dashboard",
+      "path": "/dashboard",
+      "status": "issues",
+      "issues": [
+        "Page not found or empty"
+      ],
+      "forms": 0,
+      "buttons": 0,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/dashboard.png"
+    },
+    {
+      "page": "Customers",
+      "path": "/customers",
+      "status": "success",
+      "issues": [],
+      "forms": 1,
+      "buttons": 4,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/customers.png"
+    },
+    {
+      "page": "Gateways",
+      "path": "/gateways",
+      "status": "success",
+      "issues": [],
+      "forms": 3,
+      "buttons": 9,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/gateways.png"
+    },
+    {
+      "page": "Modems",
+      "path": "/modems",
+      "status": "success",
+      "issues": [],
+      "forms": 1,
+      "buttons": 7,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/modems.png"
+    },
+    {
+      "page": "SIM Cards",
+      "path": "/sims",
+      "status": "success",
+      "issues": [],
+      "forms": 1,
+      "buttons": 3,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/sim_cards.png"
+    },
+    {
+      "page": "CDR",
+      "path": "/cdrs",
+      "status": "success",
+      "issues": [],
+      "forms": 1,
+      "buttons": 3,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/cdr.png"
+    },
+    {
+      "page": "Blacklist",
+      "path": "/blacklist",
+      "status": "success",
+      "issues": [],
+      "forms": 1,
+      "buttons": 8,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/blacklist.png"
+    },
+    {
+      "page": "Settings",
+      "path": "/settings-new",
+      "status": "success",
+      "issues": [],
+      "forms": 1,
+      "buttons": 9,
+      "screenshot": "/root/e173_go_gateway/mcp/browser-use/screenshots/settings.png"
+    }
+  ],
+  "errors": [],
+  "console_logs": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://192.168.1.35:8080/dashboard"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://192.168.1.35:8080/gateways"
+    },
+    {
+      "type": "error",
+      "text": "Error loading history: SyntaxError: Unexpected non-whitespace character after JSON at position 4 (line 1 column 5)",
+      "url": "http://192.168.1.35:8080/gateways"
+    }
+  ]
+}

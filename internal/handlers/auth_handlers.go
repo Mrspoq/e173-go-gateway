@@ -80,7 +80,7 @@ func (h *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Determine redirect URL based on user role
-	redirectURL := "/dashboard"
+	redirectURL := "/"
 	if user.HasRole(models.RoleSuperAdmin) || user.HasRole(models.RoleAdmin) {
 		redirectURL = "/admin/dashboard"
 	}

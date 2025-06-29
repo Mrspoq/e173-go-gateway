@@ -1,0 +1,98 @@
+<div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Import Blacklist from CSV</h3>
+    
+    <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
+        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">CSV Format</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            Upload a CSV file with the following columns:
+        </p>
+        <code class="block bg-gray-100 dark:bg-gray-800 p-3 rounded text-xs">
+phone_number,reason,date_added,expires_at
++212612345678,Spam calls,2025-06-29,2025-12-29
++212620123456,Fraud attempt,2025-06-29,
+        </code>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            Note: Leave expires_at empty for permanent blocks
+        </p>
+    </div>
+    
+    <form id="blacklist-import-form" 
+          hx-post="/api/v1/blacklist/import" 
+          hx-encoding="multipart/form-data"
+          hx-target="#import-result"
+          hx-swap="innerHTML">
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    CSV File
+                </label>
+                <input type="file" name="csv_file" accept=".csv" required
+                       class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400
+                              file:mr-4 file:py-2 file:px-4
+                              file:rounded-md file:border-0
+                              file:text-sm file:font-medium
+                              file:bg-indigo-50 file:text-indigo-700
+                              hover:file:bg-indigo-100">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Import Options
+                </label>
+                <div class="mt-2 space-y-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="skip_duplicates" checked
+                               class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                            Skip duplicate phone numbers
+                        </span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="validate_format" checked
+                               class="rounded border-gray-300 dark:border-gray-600 text-indigo-600">
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                            Validate phone number format
+                        </span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="this.form.reset()"
+                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    Reset
+                </button>
+                <button type="submit"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                    Import CSV
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    <div id="import-result" class="mt-6"></div>
+</div>
+
+<script>
+document.getElementById('blacklist-import-form').addEventListener('htmx:afterRequest', function(event) {
+    if (event.detail.successful) {
+        // Show success message
+        const result = document.getElementById('import-result');
+        result.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded-lg p-4">
+                <h4 class="text-sm font-medium text-green-800 dark:text-green-200">Import Successful!</h4>
+                <p class="text-sm text-green-700 dark:text-green-300 mt-1">
+                    Check the blacklist page to see imported numbers.
+                </p>
+            </div>
+        `;
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+            this.reset();
+            result.innerHTML = '';
+        }, 3000);
+    }
+});
+</script>

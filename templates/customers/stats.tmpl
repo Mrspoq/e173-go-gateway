@@ -1,0 +1,71 @@
+<div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Call Statistics</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- ACD (Average Call Duration) -->
+        <div class="bg-gray-50 dark:bg-gray-900 rounded p-4">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">ACD</dt>
+            <dd class="mt-1">
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {{if .ACD}}{{.ACD}}s{{else}}N/A{{end}}
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Average Call Duration</p>
+            </dd>
+        </div>
+        
+        <!-- ASR (Answer Seizure Ratio) -->
+        <div class="bg-gray-50 dark:bg-gray-900 rounded p-4">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">ASR</dt>
+            <dd class="mt-1">
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {{if .ASR}}{{.ASR}}%{{else}}N/A{{end}}
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Answer Seizure Ratio</p>
+            </dd>
+        </div>
+        
+        <!-- Total Calls -->
+        <div class="bg-gray-50 dark:bg-gray-900 rounded p-4">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Calls</dt>
+            <dd class="mt-1">
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {{if .TotalCalls}}{{.TotalCalls}}{{else}}0{{end}}
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Last 30 days</p>
+            </dd>
+        </div>
+        
+        <!-- Success Rate -->
+        <div class="bg-gray-50 dark:bg-gray-900 rounded p-4">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Success Rate</dt>
+            <dd class="mt-1">
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {{if .SuccessRate}}{{.SuccessRate}}%{{else}}N/A{{end}}
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Completed calls</p>
+            </dd>
+        </div>
+    </div>
+    
+    <!-- Additional Stats -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 border-t dark:border-gray-700 pt-4">
+        <div>
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Duration</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                {{if .TotalDuration}}{{.TotalDuration}} minutes{{else}}0 minutes{{end}}
+            </dd>
+        </div>
+        <div>
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Failed Calls</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                {{if .FailedCalls}}{{.FailedCalls}}{{else}}0{{end}}
+            </dd>
+        </div>
+        <div>
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Billing Minutes</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                {{if .BillingMinutes}}{{.BillingMinutes}}{{else}}0{{end}}
+            </dd>
+        </div>
+    </div>
+</div>
