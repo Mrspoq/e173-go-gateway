@@ -463,7 +463,7 @@ func (h *CustomerHandlers) GetCustomerStats(w http.ResponseWriter, r *http.Reque
 	if r.Header.Get("HX-Request") == "true" {
 		// Return HTML for HTMX
 		w.Header().Set("Content-Type", "text/html")
-		// Return just the count for now
+		// Return just the count formatted as HTML
 		w.Write([]byte(strconv.FormatInt(stats.TotalCustomers, 10)))
 		return
 	}

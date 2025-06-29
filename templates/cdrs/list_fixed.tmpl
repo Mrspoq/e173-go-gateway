@@ -1,0 +1,116 @@
+{{define "cdrs/list_fixed.tmpl"}}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}} - E173 Gateway</title>
+    
+    <!-- Tailwind CSS -->
+    <link href="/static/bundle.css" rel="stylesheet">
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    
+    <!-- _hyperscript for enhanced interactions -->
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    
+    <!-- Dark mode toggle script -->
+    <script>
+        // Dark mode toggle functionality
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+        
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark')
+                localStorage.theme = 'light'
+            } else {
+                document.documentElement.classList.add('dark')
+                localStorage.theme = 'dark'
+            }
+        }
+    </script>
+</head>
+<body class="h-full bg-gray-50 dark:bg-gray-900" hx-boost="true">
+    <div class="min-h-full">
+        <!-- Navigation -->
+        {{template "nav" .}}
+        
+        <!-- Main content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div id="page" class="px-4 py-6 sm:px-0">
+                <div class="max-w-7xl mx-auto px-4 py-6">
+                    <!-- Header -->
+                    <div class="md:flex md:items-center md:justify-between mb-8">
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
+                                Call Detail Records
+                            </h2>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                View and analyze call history
+                            </p>
+                        </div>
+                        <div class="mt-4 flex md:mt-0 md:ml-4">
+                            <button hx-get="/api/v1/cdr/recent/list" hx-target="#cdr-list" hx-swap="innerHTML" 
+                                    class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CDR List -->
+                    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+                        <div id="cdr-list" 
+                             hx-get="/api/v1/cdr/recent/list" 
+                             hx-trigger="load, every 30s" 
+                             hx-swap="innerHTML">
+                            <!-- Loading placeholder -->
+                            <div class="px-6 py-4">
+                                <div class="animate-pulse flex space-x-4">
+                                    <div class="flex-1 space-y-2 py-1">
+                                        <div class="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+                                        <div class="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Global notifications area -->
+    <div id="notifications" class="fixed top-4 right-4 z-50"></div>
+    
+    <!-- HTMX cleanup script -->
+    <script>
+        // Stop all polling when navigating away from a page
+        document.addEventListener('htmx:beforeSwap', function(evt) {
+            // If we're swapping the main page content
+            if (evt.detail.target.id === 'page') {
+                // Find all elements with polling triggers and abort them
+                document.querySelectorAll('[hx-trigger*="every"]').forEach(function(el) {
+                    htmx.trigger(el, 'htmx:abort');
+                });
+            }
+        });
+        
+        // Clean up intervals when using browser back/forward
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, refresh to ensure clean state
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
+{{end}}

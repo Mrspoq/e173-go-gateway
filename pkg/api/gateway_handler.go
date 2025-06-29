@@ -305,10 +305,20 @@ func (h *GatewayHandler) GetGatewayListUI(c *gin.Context) {
 		gateways = []*models.Gateway{} // Empty list on error
 	}
 
-	c.HTML(http.StatusOK, "gateways/list.html", gin.H{
-		"title":    "Gateway Management",
+	h.logger.Infof("Rendering gateway list with %d gateways", len(gateways))
+	
+	// Get template data helper if available
+	templateData := gin.H{
+		"title":    "Gateway Management", 
 		"Gateways": gateways,
-	})
+	}
+	
+	// Add any additional template data from context
+	if user, exists := c.Get("currentUser"); exists {
+		templateData["CurrentUser"] = user
+	}
+
+	c.HTML(http.StatusOK, "gateways/list.html", templateData)
 }
 
 // GetGatewayCreateUI handles GET /gateways/create

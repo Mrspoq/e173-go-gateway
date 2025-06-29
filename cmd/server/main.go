@@ -20,6 +20,7 @@ import (
 	"github.com/e173-gateway/e173_go_gateway/pkg/auth"
 	"github.com/e173-gateway/e173_go_gateway/pkg/database" // Import database package
 	"github.com/e173-gateway/e173_go_gateway/pkg/repository" // Import repository package
+	"github.com/e173-gateway/e173_go_gateway/pkg/models" // Import models package
 	simhandler "github.com/e173-gateway/e173_go_gateway/pkg/api" // Import API handlers
 	
 	// Import enterprise modules
@@ -274,11 +275,21 @@ func main() {
 	router.GET("/api/stats/cards", func(c *gin.Context) {
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusOK, `
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/v1/stats/modems" hx-trigger="load, every 5s" hx-swap="innerHTML"></div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/v1/stats/sims" hx-trigger="load, every 5s" hx-swap="innerHTML"></div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/v1/stats/calls" hx-trigger="load, every 5s" hx-swap="innerHTML"></div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/v1/stats/spam" hx-trigger="load, every 5s" hx-swap="innerHTML"></div>
-		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" hx-get="/api/v1/stats/gateways" hx-trigger="load, every 5s" hx-swap="innerHTML"></div>`)
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/modems" hx-trigger="load, every 5s" hx-swap="innerHTML">
+			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+		</div>
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/sims" hx-trigger="load, every 5s" hx-swap="innerHTML">
+			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+		</div>
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/calls" hx-trigger="load, every 5s" hx-swap="innerHTML">
+			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+		</div>
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/spam" hx-trigger="load, every 5s" hx-swap="innerHTML">
+			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+		</div>
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4" hx-get="/api/v1/stats/gateways" hx-trigger="load, every 5s" hx-swap="innerHTML">
+			<div class="animate-pulse text-center text-sm text-gray-500">Loading...</div>
+		</div>`)
 	})
 
 	// Direct stats endpoints for backward compatibility (template might call these)
@@ -537,6 +548,25 @@ func main() {
 		}
 	})
 
+	// Helper function to get template data with current user
+	getTemplateData := func(c *gin.Context, title string) gin.H {
+		data := gin.H{
+			"title": title,
+		}
+		
+		// Add current user if available
+		if user, exists := c.Get("currentUser"); exists {
+			currentUser := user.(*models.User)
+			data["CurrentUser"] = map[string]interface{}{
+				"Name": currentUser.FullName(),
+				"Username": currentUser.Username,
+				"Role": currentUser.Role,
+			}
+		}
+		
+		return data
+	}
+
 	// Authentication redirect middleware for HTML pages
 	authRedirect := func(c *gin.Context) {
 		// Check if user has session cookie
@@ -548,8 +578,8 @@ func main() {
 			return
 		}
 		
-		// Validate session
-		_, err = authService.ValidateSession(cookie)
+		// Validate session and get user
+		user, err := authService.ValidateSession(cookie)
 		if err != nil {
 			// Clear invalid cookie and redirect to login
 			c.SetCookie("session_token", "", -1, "/", "", false, true)
@@ -558,13 +588,14 @@ func main() {
 			return
 		}
 		
+		// Store user in context for use in handlers
+		c.Set("currentUser", user)
+		
 		c.Next()
 	}
 
 	router.GET("/", authRedirect, func(c *gin.Context) {
-		c.HTML(http.StatusOK, "dashboard_standalone.tmpl", gin.H{
-			"title": "Dashboard - E173 Gateway",
-		})
+		c.HTML(http.StatusOK, "dashboard_standalone.tmpl", getTemplateData(c, "Dashboard - E173 Gateway"))
 	})
 
 	// API v1 Group
@@ -832,7 +863,7 @@ func main() {
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">234</td>
 					<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-						<a href="#" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Edit</a>
+						<a href="/customers/1/edit" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Edit</a>
 					</td>
 				</tr>
 				<tr>
@@ -848,7 +879,7 @@ func main() {
 					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">87</td>
 					<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-						<a href="#" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Edit</a>
+						<a href="/customers/2/edit" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Edit</a>
 					</td>
 				</tr>
 			</tbody>
@@ -899,33 +930,45 @@ func main() {
 		}
 		
 		html := ""
-		for _, sim := range sims {
-			statusColor := "green"
-			statusBg := "bg-green-100 dark:bg-green-900"
-			if sim.Status == "blocked" {
-				statusColor = "red"
-				statusBg = "bg-red-100 dark:bg-red-900"
-			} else if sim.Status == "low_credit" {
-				statusColor = "yellow"
-				statusBg = "bg-yellow-100 dark:bg-yellow-900"
+		if len(sims) == 0 {
+			html = `<div class="text-center p-8">
+				<svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+				</svg>
+				<p class="text-gray-500 dark:text-gray-400 mb-4">No SIM cards found</p>
+				<a href="/sims/add" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+					Add SIM Card
+				</a>
+			</div>`
+		} else {
+			for _, sim := range sims {
+				statusColor := "green"
+				statusBg := "bg-green-100 dark:bg-green-900"
+				if sim.Status == "blocked" {
+					statusColor = "red"
+					statusBg = "bg-red-100 dark:bg-red-900"
+				} else if sim.Status == "low_credit" {
+					statusColor = "yellow"
+					statusBg = "bg-yellow-100 dark:bg-yellow-900"
+				}
+				
+				html += fmt.Sprintf(`
+				<div class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
+					<div class="flex items-center space-x-4 flex-1">
+						<div class="flex-shrink-0">
+							<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium %s text-%s-800 dark:text-%s-100">
+								%s
+							</span>
+						</div>
+						<div class="flex-1">
+							<p class="text-sm font-medium text-gray-900 dark:text-white">%s</p>
+							<p class="text-xs text-gray-500 dark:text-gray-400">%s</p>
+						</div>
+					</div>
+				</div>`, 
+				statusBg, statusColor, statusColor, strings.ToUpper(sim.Status),
+				sim.MSISDN.String, sim.OperatorName.String)
 			}
-			
-			html += fmt.Sprintf(`
-			<div class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
-				<div class="flex items-center space-x-4 flex-1">
-					<div class="flex-shrink-0">
-						<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium %s text-%s-800 dark:text-%s-100">
-							%s
-						</span>
-					</div>
-					<div class="flex-1">
-						<p class="text-sm font-medium text-gray-900 dark:text-white">%s</p>
-						<p class="text-xs text-gray-500 dark:text-gray-400">%s</p>
-					</div>
-				</div>
-			</div>`, 
-			statusBg, statusColor, statusColor, strings.ToUpper(sim.Status),
-			sim.MSISDN.String, sim.OperatorName.String)
 		}
 		
 		c.Header("Content-Type", "text/html")
@@ -1034,53 +1077,47 @@ func main() {
 		}
 	}
 
-	// Customer Management Frontend Routes (temporarily unprotected for testing)
+	// Customer Management Frontend Routes
 	customerUIGroup := router.Group("/customers")
-	// customerUIGroup.Use(handlers.WrapMiddleware(authHandlers.AuthMiddleware)) // Temporarily disabled
+	customerUIGroup.Use(authRedirect) // Add authentication
 	{
 		// Customer List
 		customerUIGroup.GET("", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "customers_standalone.tmpl", gin.H{
-				"title": "Customer Management",
-			})
+			c.HTML(http.StatusOK, "customers_standalone.tmpl", getTemplateData(c, "Customer Management"))
 		})
 		
 		// Create Customer
 		customerUIGroup.GET("/create", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "customers/create.html", gin.H{
-				"title": "Create Customer",
-			})
+			c.HTML(http.StatusOK, "customers/create.html", getTemplateData(c, "Create Customer"))
 		})
 		
 		// Edit Customer (requires customer data)
 		customerUIGroup.GET("/:id/edit", func(c *gin.Context) {
 			customerID := c.Param("id")
 			// In a real implementation, you'd fetch customer data here
-			
-			c.HTML(http.StatusOK, "customers/edit.html", gin.H{
-				"title": "Edit Customer",
-				"customer_id": customerID,
-			})
+			data := getTemplateData(c, "Edit Customer")
+			data["customer_id"] = customerID
+			c.HTML(http.StatusOK, "customers/edit.html", data)
 		})
 		
 		// Balance Management (requires customer data)
 		customerUIGroup.GET("/:id/balance", func(c *gin.Context) {
 			customerID := c.Param("id")
 			// In a real implementation, you'd fetch customer data here
-			
-			c.HTML(http.StatusOK, "customers/balance.html", gin.H{
-				"title": "Balance Management",
-				"customer_id": customerID,
-			})
+			data := getTemplateData(c, "Balance Management")
+			data["customer_id"] = customerID
+			c.HTML(http.StatusOK, "customers/balance.html", data)
 		})
 	}
 
-	// Gateway Management Frontend Routes (temporarily unprotected for testing)
+	// Gateway Management Frontend Routes
 	gatewayUIGroup := router.Group("/gateways")
-	// gatewayUIGroup.Use(handlers.WrapMiddleware(authHandlers.AuthMiddleware)) // Temporarily disabled for testing
+	gatewayUIGroup.Use(authRedirect) // Use the same auth as other protected routes
 	{
 		// Gateway List
-		gatewayUIGroup.GET("", gatewayHandler.GetGatewayListUI)
+		gatewayUIGroup.GET("", func(c *gin.Context) {
+			gatewayHandler.GetGatewayListUI(c)
+		})
 		
 		// Create Gateway
 		gatewayUIGroup.GET("/create", gatewayHandler.GetGatewayCreateUI)
@@ -1089,71 +1126,58 @@ func main() {
 		gatewayUIGroup.GET("/:id/edit", gatewayHandler.GetGatewayEditUI)
 	}
 
-	// Modem Management Frontend Routes (temporarily unprotected for testing)
+	// Modem Management Frontend Routes
 	modemUIGroup := router.Group("/modems")
-	// modemUIGroup.Use(handlers.WrapMiddleware(authHandlers.AuthMiddleware)) // Temporarily disabled for testing
+	modemUIGroup.Use(authRedirect)
 	{
 		// Modem List
 		modemUIGroup.GET("", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "modems_standalone.tmpl", gin.H{
-				"title": "Modem Management",
-			})
+			c.HTML(http.StatusOK, "modems_standalone.tmpl", getTemplateData(c, "Modem Management"))
 		})
 	}
 
-	// SIM Management Frontend Routes (temporarily unprotected for testing)
+	// SIM Management Frontend Routes
 	simUIGroup := router.Group("/sims")
-	// simUIGroup.Use(handlers.WrapMiddleware(authHandlers.AuthMiddleware)) // Temporarily disabled for testing
+	simUIGroup.Use(authRedirect)
 	{
 		// SIM List
 		simUIGroup.GET("", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "sims_standalone.tmpl", gin.H{
-				"title": "SIM Card Management",
-			})
+			c.HTML(http.StatusOK, "sims_standalone.tmpl", getTemplateData(c, "SIM Card Management"))
 		})
 	}
 
-	// CDR Frontend Routes (temporarily unprotected for testing)
+	// CDR Frontend Routes
 	cdrUIGroup := router.Group("/cdrs")
-	// cdrUIGroup.Use(handlers.WrapMiddleware(authHandlers.AuthMiddleware)) // Temporarily disabled for testing
+	cdrUIGroup.Use(authRedirect)
 	{
 		// CDR List
 		cdrUIGroup.GET("", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "cdrs/list.tmpl", gin.H{
-				"title": "Call Detail Records",
-			})
+			c.HTML(http.StatusOK, "cdrs/list_fixed.tmpl", getTemplateData(c, "Call Detail Records"))
 		})
 	}
 
-	// Blacklist Frontend Routes (temporarily unprotected for testing)
+	// Blacklist Frontend Routes
 	blacklistUIGroup := router.Group("/blacklist")
-	// blacklistUIGroup.Use(handlers.WrapMiddleware(authHandlers.AuthMiddleware)) // Temporarily disabled for testing
+	blacklistUIGroup.Use(authRedirect)
 	{
 		// Blacklist List
 		blacklistUIGroup.GET("", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "blacklist/list.tmpl", gin.H{
-				"title": "Blacklist Management",
-			})
+			c.HTML(http.StatusOK, "blacklist/list_fixed.tmpl", getTemplateData(c, "Blacklist Management"))
 		})
 	}
 
-	// Settings Frontend Routes (temporarily unprotected for testing)
+	// Settings Frontend Routes
 	// Add unprotected settings route directly to router
-	router.GET("/settings-new", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "settings_standalone.tmpl", gin.H{
-			"title": "System Settings",
-		})
+	router.GET("/settings-new", authRedirect, func(c *gin.Context) {
+		c.HTML(http.StatusOK, "settings_standalone.tmpl", getTemplateData(c, "System Settings"))
 	})
 	
 	settingsUIGroup := router.Group("/settings")
-	// settingsUIGroup.Use(auth.JWTMiddleware(jwtService)) // Temporarily disabled
-	// settingsUIGroup.Use(handlers.WrapRoleMiddleware(authHandlers.RoleMiddleware, "admin")) // Temporarily disabled for testing
+	settingsUIGroup.Use(authRedirect)
 	{
 		// Settings Page
 		settingsUIGroup.GET("", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "settings_standalone.tmpl", gin.H{
-				"title": "System Settings",
-			})
+			c.HTML(http.StatusOK, "settings_standalone.tmpl", getTemplateData(c, "System Settings"))
 		})
 	}
 

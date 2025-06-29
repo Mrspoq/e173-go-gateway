@@ -38,24 +38,15 @@ func (h *StatsHandler) GetModemStats(c *gin.Context) {
 		h.logger.Errorf("Error fetching modems for stats: %v", err)
 		c.Header("Content-Type", "text/html")
 		c.String(http.StatusOK, `
-		<div id="modem-stats-card" hx-get="/api/stats/modems" hx-trigger="every 5s" hx-swap="outerHTML" class="dashboard-card">
-			<div class="flex items-center">
-				<div class="flex-shrink-0">
-					<div class="w-8 h-8 bg-red-100 rounded-md flex items-center justify-center">
-						<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
-					</div>
-				</div>
-				<div class="ml-5 w-0 flex-1">
-					<dl>
-						<dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Online Modems</dt>
-						<dd class="flex items-baseline">
-							<div class="text-2xl font-semibold text-red-600">Error</div>
-						</dd>
-					</dl>
-				</div>
+		<div class="text-center">
+			<div class="inline-flex items-center justify-center w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full mb-2">
+				<svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
 			</div>
+			<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Modems</h3>
+			<p class="mt-1 text-xl font-semibold text-red-600 dark:text-red-400">Error</p>
+			<p class="text-xs text-gray-500 dark:text-gray-400">Failed to load</p>
 		</div>`)
 		return
 	}
@@ -79,24 +70,15 @@ func (h *StatsHandler) GetModemStats(c *gin.Context) {
 
 	c.Header("Content-Type", "text/html")
 	c.String(http.StatusOK, `
-	<div id="modem-stats-card" hx-get="/api/stats/modems" hx-trigger="every 5s" hx-swap="outerHTML" class="dashboard-card">
-		<div class="flex items-center">
-			<div class="flex-shrink-0">
-				<div class="w-8 h-8 bg-`+statusColor+`-100 rounded-md flex items-center justify-center">
-					<svg class="w-5 h-5 text-`+statusColor+`-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-					</svg>
-				</div>
-			</div>
-			<div class="ml-5 w-0 flex-1">
-				<dl>
-					<dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Online Modems</dt>
-					<dd class="flex items-baseline">
-						<div class="text-2xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(onlineCount)+` / `+strconv.Itoa(total)+`</div>
-					</dd>
-				</dl>
-			</div>
+	<div class="text-center">
+		<div class="inline-flex items-center justify-center w-10 h-10 bg-`+statusColor+`-100 dark:bg-`+statusColor+`-900 rounded-full mb-2">
+			<svg class="w-6 h-6 text-`+statusColor+`-600 dark:text-`+statusColor+`-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+			</svg>
 		</div>
+		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Modems</h3>
+		<p class="mt-1 text-xl font-semibold text-gray-900 dark:text-white">`+strconv.Itoa(onlineCount)+`/`+strconv.Itoa(total)+`</p>
+		<p class="text-xs text-`+statusColor+`-600 dark:text-`+statusColor+`-400">Online</p>
 	</div>`)
 }
 
