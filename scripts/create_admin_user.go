@@ -14,7 +14,10 @@ func main() {
 	// Get database URL from environment or use default
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://e173_user:3omartel580@localhost/e173_gateway?sslmode=disable"
+		dbURL = os.Getenv("DATABASE_URL")
+		if dbURL == "" {
+			log.Fatal("DATABASE_URL environment variable not set")
+		}
 	}
 
 	// Connect to database

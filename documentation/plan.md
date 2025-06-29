@@ -202,7 +202,7 @@
 - base.tmpl dynamic content reverted to static 'content'; parse error resolved; server builds cleanly.
 - Authentication redirect middleware added; dashboard now requires login and redirects unauthenticated users to /login.
 - Login POST route now uses AuthService and sets `session_token` cookie; backend builds successfully.
-- Database password confirmed by user: `3omartel580`; ensure `.env` and psql commands use this.
+- Database password should be set in environment variables; ensure `.env` and psql commands use environment configuration.
 - Admin user exists but bcrypt hash mismatches `admin/admin`; need to reset or seed correct password.
 - Curl self-test confirms 302 redirect to /login and successful dashboard access after POST; session cookie persistence confirmed. Remaining issue: template block collision causes Settings page to render in place of Dashboard & Login.
 - Standalone `login_standalone.tmpl` created; /login route now renders this file to bypass block collisions.
@@ -291,7 +291,7 @@ Fix database config and enable successful admin login
 - [x] Verify authentication flow with curl (unauthorized -> 401, login -> JWT cookie)
 - [ ] Rename remaining templates (modems, blacklist, cdrs, settings, login) to unique blocks
 - [ ] Investigate AuthService login failure after password hash update (check bcrypt compare, userRepo, db connection)
-- Database password confirmed by user: `3omartel580`; ensure `.env` and psql commands use this.
+- Database password should be set in environment variables; ensure `.env` and psql commands use environment configuration.
 - Admin user password hash updated to match `admin`; login still rejected – need to debug AuthService/userRepo logic.
 - Admin user account is locked after 5 failed attempts; `locked_until` set ~01:10 – must unlock or wait.
 - [x] Admin account unlocked; login with `admin/admin` now succeeds.

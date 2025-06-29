@@ -3,9 +3,9 @@
 
 -- Insert sample gateways
 INSERT INTO gateways (id, name, description, location, ip_address, port, api_key, ami_host, ami_port, ami_username, ami_password, status, last_heartbeat, created_at, updated_at) VALUES
-('550e8400-e29b-41d4-a716-446655440001'::uuid, 'box1', 'Primary Gateway - Local', 'Office', '127.0.0.1', 8081, 'box1-api-key-123', 'localhost', 5038, 'admin', '3omartel580', 'active', NOW(), NOW(), NOW()),
-('550e8400-e29b-41d4-a716-446655440002'::uuid, 'box2', 'Secondary Gateway - Remote', 'Data Center 1', '10.0.1.100', 8082, 'box2-api-key-456', '10.0.1.100', 5038, 'admin', '3omartel580', 'offline', NOW() - INTERVAL '1 hour', NOW(), NOW()),
-('550e8400-e29b-41d4-a716-446655440003'::uuid, 'box3', 'Tertiary Gateway - Backup', 'Data Center 2', '10.0.2.100', 8083, 'box3-api-key-789', '10.0.2.100', 5038, 'admin', '3omartel580', 'active', NOW() - INTERVAL '5 minutes', NOW(), NOW())
+('550e8400-e29b-41d4-a716-446655440001'::uuid, 'box1', 'Primary Gateway - Local', 'Office', '127.0.0.1', 8081, 'box1-api-key-123', 'localhost', 5038, 'admin', '[AMI_PASSWORD]', 'active', NOW(), NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440002'::uuid, 'box2', 'Secondary Gateway - Remote', 'Data Center 1', '10.0.1.100', 8082, 'box2-api-key-456', '10.0.1.100', 5038, 'admin', '[AMI_PASSWORD]', 'offline', NOW() - INTERVAL '1 hour', NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440003'::uuid, 'box3', 'Tertiary Gateway - Backup', 'Data Center 2', '10.0.2.100', 8083, 'box3-api-key-789', '10.0.2.100', 5038, 'admin', '[AMI_PASSWORD]', 'active', NOW() - INTERVAL '5 minutes', NOW(), NOW())
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     description = EXCLUDED.description,

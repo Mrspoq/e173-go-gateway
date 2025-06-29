@@ -128,7 +128,7 @@ All prefixes formatted with country code 212.
 
 ## Tools & Technologies Used
 1. **Browser Use MCP** - For UI testing and automation
-2. **PostgreSQL** - Database with password `3omartel580`
+2. **PostgreSQL** - Database with secure password configured via environment variables
 3. **HTMX** - Real-time UI updates without JavaScript
 4. **Tailwind CSS** - Responsive dark mode UI
 5. **Go/Gin** - Backend framework with hot reload
