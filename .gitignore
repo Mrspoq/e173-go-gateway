@@ -75,3 +75,8 @@ MCP_API_KEYS_BACKUP.md
 
 # GitHub credentials
 .github_config
+
+# MCP sensitive configs
+mcp/github-mcp-config.json
+mcp/*-token.json
+mcp/*-credentials.json
