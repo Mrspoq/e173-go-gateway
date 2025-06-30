@@ -331,3 +331,13 @@ func (g *GooglePhoneValidator) GetCarrier(phoneNumber string) string {
     
     return info.Carrier
 }
+
+// IsValid implements PhoneNumberValidator interface
+func (g *GooglePhoneValidator) IsValid(phoneNumber string) bool {
+    info, err := g.ValidatePhoneNumber(phoneNumber)
+    if err != nil {
+        return false
+    }
+    
+    return info.IsValid
+}

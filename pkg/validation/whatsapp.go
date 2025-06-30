@@ -11,8 +11,8 @@ import (
     "github.com/e173-gateway/e173_go_gateway/pkg/models"
 )
 
-// WhatsAppValidator handles WhatsApp Business API validation
-type WhatsAppValidator struct {
+// WhatsAppBusinessValidator handles WhatsApp Business API validation
+type WhatsAppBusinessValidator struct {
     apiKey    string
     baseURL   string
     client    *http.Client
@@ -35,9 +35,9 @@ type ValidationCache struct {
     expiry  time.Duration
 }
 
-// NewWhatsAppValidator creates a new WhatsApp validator instance
-func NewWhatsAppValidator(apiKey string) *WhatsAppValidator {
-    return &WhatsAppValidator{
+// NewWhatsAppBusinessValidator creates a new WhatsApp validator instance
+func NewWhatsAppBusinessValidator(apiKey string) *WhatsAppBusinessValidator {
+    return &WhatsAppBusinessValidator{
         apiKey:  apiKey,
         baseURL: "https://api.whatsapp.com/v1/contacts", // Official WhatsApp Business API
         client: &http.Client{
@@ -51,7 +51,7 @@ func NewWhatsAppValidator(apiKey string) *WhatsAppValidator {
 }
 
 // ValidateNumber checks if a phone number has WhatsApp
-func (w *WhatsAppValidator) ValidateNumber(phoneNumber string) (*models.ValidationResult, error) {
+func (w *WhatsAppBusinessValidator) ValidateNumber(phoneNumber string) (*models.ValidationResult, error) {
     // Check cache first
     if cached := w.cache.Get(phoneNumber); cached != nil {
         return cached, nil
@@ -70,7 +70,7 @@ func (w *WhatsAppValidator) ValidateNumber(phoneNumber string) (*models.Validati
 }
 
 // IsLikelyRealPerson determines if a number belongs to a real person
-func (w *WhatsAppValidator) IsLikelyRealPerson(phoneNumber string) (bool, float64, error) {
+func (w *WhatsAppBusinessValidator) IsLikelyRealPerson(phoneNumber string) (bool, float64, error) {
     result, err := w.ValidateNumber(phoneNumber)
     if err != nil {
         return false, 0, err
@@ -101,7 +101,7 @@ func (w *WhatsAppValidator) IsLikelyRealPerson(phoneNumber string) (bool, float6
 }
 
 // makeAPIRequest performs the actual API call to WhatsApp
-func (w *WhatsAppValidator) makeAPIRequest(phoneNumber string) (*models.ValidationResult, error) {
+func (w *WhatsAppBusinessValidator) makeAPIRequest(phoneNumber string) (*models.ValidationResult, error) {
     // Prepare request payload
     payload := map[string]interface{}{
         "contacts": []map[string]string{
@@ -166,7 +166,7 @@ func (w *WhatsAppValidator) makeAPIRequest(phoneNumber string) (*models.Validati
 }
 
 // calculateConfidence determines confidence score based on API response
-func (w *WhatsAppValidator) calculateConfidence(resp WhatsAppAPIResponse) float64 {
+func (w *WhatsAppBusinessValidator) calculateConfidence(resp WhatsAppAPIResponse) float64 {
     confidence := 0.5 // Base confidence
 
     if resp.Valid {

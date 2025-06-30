@@ -1,0 +1,627 @@
+Blocs des numéros attribués aux opérateurs de télécommunications marocains :
+1. Numéros destinés aux réseaux mobiles :
+La structure des numéros mobiles est de la forme 0ZABPQMCDU avec Z=6 ou 7.
+Les numéros attribués aux opérateurs mobiles sont comme suit :
+Blocs de numéros attribués
+Opérateur
+0ZABPQMCDU*
+0610XXXXXX
+0611XXXXXX
+0613XXXXXX
+0615XXXXXX
+0616XXXXXX
+0618XXXXXX
+0622XXXXXX
+0623XXXXXX
+0624XXXXXX
+0628XXXXXX
+0636XXXXXX
+0637XXXXXX
+0639XXXXXX
+0641XXXXXX
+0642XXXXXX
+0643XXXXXX
+0648XXXXXX
+0650XXXXXX
+0651XXXXXX
+0652XXXXXX
+0653XXXXXX
+0654XXXXXX
+0655XXXXXX
+0658XXXXXX
+0659XXXXXX
+0661XXXXXX
+ITISSALAT AL-MAGHRIB
+0662XXXXXX
+0666XXXXXX
+0667XXXXXX
+0668XXXXXX
+0670XXXXXX
+0671XXXXXX
+0672XXXXXX
+0673XXXXXX
+0676XXXXXX
+0677XXXXXX
+0678XXXXXX
+0682XXXXXX
+0689XXXXXX
+0696XXXXXX
+0697XXXXXX
+0750XXXXXX
+0751XXXXXX
+0752XXXXXX
+0753XXXXXX
+0754XXXXXX
+0755XXXXXX
+0760XXXXXX
+0761XXXXXX
+0762XXXXXX
+0763XXXXXX
+0764XXXXXX
+Version du 25 juin 2025
+
+Page 1 sur 6
+
+MEDI TELECOM
+
+Wana Corporate
+
+Version du 25 juin 2025
+
+0765XXXXXX
+0766XXXXXX
+0767XXXXXX
+0768XXXXXX
+0769XXXXXX
+0612XXXXXX
+0614XXXXXX
+0617XXXXXX
+0619XXXXXX
+0620XXXXXX
+0621XXXXXX
+0625XXXXXX
+0631XXXXXX
+0632XXXXXX
+0644XXXXXX
+0645XXXXXX
+0649XXXXXX
+0656XXXXXX
+0657XXXXXX
+0660XXXXXX
+0663XXXXXX
+0664XXXXXX
+0665XXXXXX
+0669XXXXXX
+0674XXXXXX
+0675XXXXXX
+0679XXXXXX
+0684XXXXXX
+0688XXXXXX
+0691XXXXXX
+0693XXXXXX
+0694XXXXXX
+0770XXXXXX
+0771XXXXXX
+0772XXXXXX
+0773XXXXXX
+0774XXXXXX
+0775XXXXXX
+0776XXXXXX
+0777XXXXXX
+0778XXXXXX
+0779XXXXXX
+0780XXXXXX
+0781XXXXXX
+0782XXXXXX
+0783XXXXXX
+0784XXXXXX
+0785XXXXXX
+0786XXXXXX
+0787XXXXXX
+0526XXXXXX
+0527XXXXXX
+0533XXXXXX
+0534XXXXXX
+0540XXXXXX
+0546XXXXXX
+0547XXXXXX
+0550XXXXXX
+0553XXXXXX
+060XXXXXXX
+Page 2 sur 6
+
+0626XXXXXX
+0627XXXXXX
+0629XXXXXX
+0630XXXXXX
+0633XXXXXX
+0634XXXXXX
+0635XXXXXX
+0638XXXXXX
+0640XXXXXX
+0646XXXXXX
+0647XXXXXX
+0680XXXXXX
+0681XXXXXX
+0687XXXXXX
+0690XXXXXX
+0695XXXXXX
+0698XXXXXX
+0699XXXXXX
+0700XXXXXX
+0701XXXXXX
+0702XXXXXX
+0703XXXXXX
+0704XXXXXX
+0705XXXXXX
+0706XXXXXX
+0707XXXXXX
+0708XXXXXX
+0709XXXXXX
+0710XXXXXX
+0711XXXXXX
+0712XXXXXX
+0713XXXXXX
+0714XXXXXX
+0715XXXXXX
+0716XXXXXX
+0717XXXXXX
+0718XXXXXX
+0719XXXXXX
+0720XXXXXX
+0721XXXXXX
+0722XXXXXX
+0723XXXXXX
+0724XXXXXX
+0725XXXXXX
+0726XXXXXX
+0727XXXXXX
+0728XXXXXX
+* X : chiffre variant de 0 à 9.
+
+2. Numéros géographiques (pour les réseaux fixes et les réseaux nouvelle génération) :
+La structure des numéros géographiques est de la forme 0ZABPQMCDU avec Z= 5.
+Les numéros géographiques attribués aux opérateurs nationaux sont comme suit :
+2.1.
+Zone/ville
+Casablanca, Berrechid, Deroua,
+Had Soualem.
+Casablanca,
+Bouskoura,
+Ain
+Harrouda
+Version du 25 juin 2025
+
+ITISSALAT AL-MAGHRIB / Réseau Fixe
+Blocs de
+Zone
+numéros *
+05220 XXXXX
+Marrakech
+Marrakech,
+Kelaa,
+Attaouia,
+05221 XXXXX
+Tamellalt, Freita, Sidi Rahal, EL
+Brouj, Settat.
+
+Blocs de
+numéros *
+05240 XXXXX
+05242 XXXXX
+
+Page 3 sur 6
+
+Casablanca
+Casablanca, Berrechid
+Casablanca
+Casablanca, Berrechid, Deroua.
+Casablanca
+Casablanca
+Casablanca, Bouskoura.
+Casablanca, Sidi Rahal, Had
+Soualem, Berrechid.
+
+Casablanca, Benslimane.
+Benslimane, Mohammedia.
+El Jadida, Jorf Lasfar, Khemis
+Zemamra, Azemmour, Sidi Bouzid,
+Sidi Bennour, Bir Jdid, Sidi Smail, Had
+Oulad Frej, El oualidia, Larbaa
+Aounate, My Abdellah, Tnine
+Chtouka,
+Beni
+Yakhlef,
+Pont
+Blondin,
+Benslimane,
+Mohammedia.
+Beni Mellal, Oued Zem, El ksiba,
+Kasba Tadla, Zaouet Cheikh, Sebt
+Oulad Nemma, Fkih Ben Salah,
+Afourer,
+Ouaouizarht,
+Khemis
+Ouled Ayad, Ait Aatab, Sidi Jaber,
+Oulad M’Barek, Dar Oulad Zidouh,
+Bzou, Had Bradia, Azilal, Khouribga,
+Settat, Ben Ahmed.
+Oulad Said, Oulad Zmam, Sidi Aissa,
+Tagleft, Aghbala, EL Ksiba, Oulad
+Yaich, Zaouiet Cheikh, Ouled
+Abdellah, Ouled Rguiaa, Tagzirt,
+Fkih Ben Salah, Beni Mellal,
+Khouribga,
+Boujniba,
+Hattane,
+Boulanoire, Lagfaf, Tlat Loulad,
+Oued Zem, Bejaad, Demnate,
+Azilal.
+Settat, Ben Ahmed, Oulad Abbou,
+Sidi Hajjaj, Ras Ain.
+El Jadida
+
+Version du 25 juin 2025
+
+05222 XXXXX
+05223 XXXXX
+05224 XXXXX
+05225 XXXXX
+05226 XXXXX
+05227 XXXXX
+05228 XXXXX
+05229 XXXXX
+
+05231 XXXXX
+05232 XXXXX
+05233 XXXXX
+
+05234 XXXXX
+
+Marrakech, Benguerir,
+Skhour
+Rhamna,
+Sidi
+Bouathmane,
+Oukeimdene.
+Marrakech, Chemaia, EL Kelaa,
+Ait Ourir, Tahanaout, Tamesloht,
+Amezmiz, Ourika.
+Safi
+Essaouira, Tamanar, Hanchan,
+Talmest, Ghazoua.
+Ouarzazate, Skoura, Toundoute,
+Klaa, Khmis Dades, Boumalen,
+Tinghir, Taghazoute, Oudgha,
+Tazarine,
+Zagoura,
+Tmgroute,
+Tagounite, Mhamid, Tinzouline,
+Tamzmoute, Agdez, Taznakhte,
+Tabounte.
+Agadir, Taroudante, Oulad Teima.
+Agadir, Anza, Aourir, Taghazout,
+Belfaa, Ait Melloul, Ait Baha,
+Massa,
+Tikiouine,
+Tamri,
+Bensergao, Drarga.
+Agadir,
+Bensergao,
+Drarga.
+Taroudant, Oulad Teima, Sebt
+Guerdane.
+Tiznit, Tighmi, Tlat Lakhsas.
+Tata, Assa, TanTan.
+Agadir, Tafraoute, Tata, Akka,
+Biougra, Ait Amira, Sidi Bibi,
+Taroudant,
+Ighram,
+Tiznit,
+Guelmim, Tantan.
+Dakhla, Laayoune
+
+05243 XXXXX
+05244 XXXXX
+05246 XXXXX
+05247 XXXXX
+05248 XXXXX
+
+05280 XXXXX
+05282 XXXXX
+
+05283 XXXXX
+05285 XXXXX
+05286 XXXXX
+05287 XXXXX
+05288 XXXXX
+
+05289 XXXXX
+
+05235 XXXXX
+
+05237 XXXXX
+05238 XXXXX
+
+Page 4 sur 6
+
+Rabat, Tamesna
+Rabat
+Rabat
+Kenitra, Mehdia, Sidi Taybi, Sidi
+Yahia, Dar EL Gueddari, Dar
+Balamri, Sidi Allal Tazi.
+My Bouslham, Arbaoua, Lalla
+Mimouna, Mbelksiri, Ouazane, Souk
+Larbaa, Sanaoubar, Tamesna,
+Temara, Bouznika.
+Sala El Jadida, Sidi Kacem, Sidi
+Slimane, Rabat, Temara, Ain
+Aouda, Skhirate, Tifelt, Khemisset,
+Maaziz, Tiddas, Bahraoui, Oulmes,
+Rommani, Brachoua.
+Témara, Skhirate, Bouznika, Sidi
+Yahya Zeir, Tamesna, Rabat.
+Rabat, Salé, Skhirate, Ain Aouda,
+Bouznika, Témara.
+Bouknadel, Sala EL Jadida, Salé,
+Had kourt.
+Ouazane, Souk Larbaa, Dlalha,
+Belksiri, Khenichet, Jorf EL Melha.
+
+Tanger
+Tanger
+Larache
+Tétouan
+Tétouan
+Tétouan, Al Hoceima.
+Larache, Al Hoceima.
+
+Version du 25 juin 2025
+
+05370 XXXXX
+05371 XXXXX
+05372 XXXXX
+05373 XXXXX
+05374 XXXXX
+
+05375 XXXXX
+
+05376 XXXXX
+05377 XXXXX
+05378 XXXXX
+05379 XXXXX
+
+05393 XXXXX
+05394 XXXXX
+05395 XXXXX
+05396 XXXXX
+05397 XXXXX
+05398 XXXXX
+05399 XXXXX
+
+Ifrane
+Guercif, Had Oulad Zbair, Ajdir, Tizi
+Ousli, Taza, Oued Amlil, Aknoul,
+Zerarda, Guigou, Azrou.
+Rich, Errachidia, Midelt, Aghbalou,
+Kerrouchen,
+Zaida,
+Tounfite,
+Aguelmous, Ait Ishak, EL Kbab,
+Khenifra, Mrirt, My Bouazza, Haj
+Kaddour, Meknès.
+Meknès, Agourai, Boufekrane,
+Taoujdate, Mhaya, Beni Mhamed.
+Errachidia, Erfoud, Rissani, Rich,
+Midelt, Aghbalou, Kerrouchen,
+Boumia, Itzer, Khenifra, Tighssaline,
+Azrou, Ifrane, Ainleuh, Timahdite,
+Missour, Outat EL Haj, Boulmane,
+Imouzzer Marmoucha, Meknès,
+Benimhamed, Boudarbala, Hajeb,
+My Driss, Sebaa Ayoune, Dkhrissa.
+Fès, Karia, Ribat Khair, Sidi Hrazem,
+Taounate, Rhafssai, Oulad Tayeb,
+Imouzzer, Sefrou, Menzel, Bhalil,
+Tissa, Ainchegag, My Yaacoub,
+Taza, Guercif, Matmata, Tahala,
+Missour, Tindite, Azrou.
+Fès, Ouartzagh, Thar Souk, Ain
+Aicha,
+Rissani,
+Goulmima,
+Tinejdad, Aoufouss, Jorf, Boudnib,
+Alnif, Talsinet, Bni Tajjt, Bouanane,
+Oujda.
+Goulmima, Tinejdad, Gourrama,
+Alnif, Mellaab, Sidi Addi, Ifrane,
+Azrou.
+Fès, Bni Oulid, Bir Tamtam, Ras EL
+Ma, Sefrou, Azzaba.
+Saidia
+Berkane, Latamna, Sidi Slimane,
+Chouihia.
+Nador,
+Ferkhana,
+Bni
+nsar,
+Zegangane, Tlat Lota, Selouane,
+Kariat, Arouit, Midar, Driouch,
+Igetti, Iddyrene, Tazaghine, Bni
+Chiker.
+Bentayb,
+Tafersit,
+Tiztoutine,
+Crona, Boudinar, Cassita, Dar
+Kebdani, Tala Azlaf.
+Oued Nachef, Hassi Blal, Lmsalla.
+Oujda, Berkane, Ain Reggada,
+Saidia, Ahfir, Aklim, Tafouralet, Ras
+EL Ma, Madagh, Bni Drar, Labsara,
+Ain Bni Mathar, Tendrara, EL
+Aouine, Debdou, Taourirt, Nador,
+Bni Nsar, Selouane, Zaio.
+Oujda, Bouarfa, Taourirt.
+Jerada, Figuig.
+
+05350 XXXXX
+05352 XXXXX
+05353 XXXXX
+
+05354 XXXXX
+05355 XXXXX
+
+05356 XXXXX
+
+05357 XXXXX
+
+05358 XXXXX
+05359 XXXXX
+
+05360 XXXXX
+05362 XXXXX
+05363 XXXXX
+
+05364 XXXXX
+05365 XXXXX
+05366 XXXXX
+
+05367 XXXXX
+05368 XXXXX
+
+Page 5 sur 6
+
+2.2.
+MEDI TELECOM / Réseau nouvelle génération
+Casablanca
+0520 XXXXXX
+Rabat, Kénitra
+Casablanca, Settat,
+0521 XXXXXX
+Tanger, Tétouan, Larache, Al
+Mohammedia, Berrechid, El
+Hoceima, Chefchaouen
+Jadida, Béni Mellal, Khouribga
+Marrakech, Agadir, Dakhla,
+0525 XXXXXX
+Fès, Oujda, Meknès, Taza, Nador,
+Essaouira, Laayoune, Ouarzazate,
+Errachidia
+Safi
+2.3.
+WANA CORPORATE / Réseau nouvelle génération
+Casablanca
+05290 XXXXX
+Rabat
+Casablanca
+05291 XXXXX
+Rabat
+Casablanca
+05292 XXXXX
+Casablanca
+05293 XXXXX
+Rabat
+Casablanca
+05294 XXXXX
+Rabat
+Casablanca
+05295 XXXXX
+Tanger et alentours
+Marrakech et alentours
+05296 XXXXX
+Tanger et alentours
+Fès, Meknès et alentours
+Agadir et alentours
+05297 XXXXX
+Fès, Meknès et alentours
+Marrakech et alentours
+05298 XXXXX
+Tanger et alentours
+Agadir et alentours
+05299 XXXXX
+Fès, Meknès et alentours
+
+0530 XXXXXX
+0531 XXXXXX
+
+0532 XXXXXX
+
+05380 XXXXX
+05381 XXXXX
+05382 XXXXX
+05383 XXXXX
+05384 XXXXX
+05385 XXXXX
+05386 XXXXX
+05387 XXXXX
+05388 XXXXX
+05389 XXXXX
+
+* X : chiffre variant de 0 à 9.
+
+3. Numéros non géographiques (pour les réseaux fixes et les réseaux nouvelle génération) :
+La structure des numéros non géographiques est de la forme 0ZABPQMCDU avec Z= 8.
+Les numéros non géographiques attribués aux opérateurs nationaux sont comme suit :
+Opérateur
+
+ITISSALAT AL-MAGHRIB
+
+MEDI TELECOM
+Wana Corporate
+
+Blocs de numéros attribués
+0ZABPQMCDU*
+08080 XXXXX
+08083 XXXXX
+08084 XXXXX
+08085 XXXXX
+08086 XXXXX
+08098 XXXXX
+08099 XXXXX
+089293 XXXX
+08082 XXXXX
+08081 XXXXX
+
+Service
+VoIP (Centrex IP)
+VoIP
+VoIP
+VoIP
+VoIP
+VoIP
+VoIP
+Publiphones à cartes via VSAT
+VoIP
+VoIP
+
+* X : chiffre variant de 0 à 9.
+
+4. Autres :
+4.1. Pour le système GMPCS de type GlobalStar :
+Les blocs de numéros attribués à l’opérateur Al Hourria Telecom sont comme suit :
+08920 XXXXX
+08921 XXXXX
+08922 XXXXX
+* X : chiffre variant de 0 à 9.
+
+4.2. Pour les opérateurs VSAT :
+Opérateur
+CIMECOM
+SPACECOM
+GULFSAT MAGHREB
+ITISSALAT AL-MAGHRIB
+
+Blocs de numéros *
+059240 XXXX
+059241 XXXX
+059242 XXXX
+059293 XXXX
+
+* X : chiffre variant de 0 à 9.
+
+Version du 25 juin 2025
+
+Page 6 sur 6
+
+

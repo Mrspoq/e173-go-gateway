@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,6 +29,10 @@ import (
 	"github.com/e173-gateway/e173_go_gateway/internal/service"
 	"github.com/e173-gateway/e173_go_gateway/internal/handlers"
 	adapter "github.com/e173-gateway/e173_go_gateway/internal/database"
+	
+	// Import validation and filter modules
+	"github.com/e173-gateway/e173_go_gateway/pkg/validation"
+	filterService "github.com/e173-gateway/e173_go_gateway/pkg/service"
 	
 	// Import cache and analytics
 	"github.com/e173-gateway/e173_go_gateway/pkg/cache"
@@ -149,6 +154,8 @@ func main() {
 	cdrRepo := repository.NewPostgresCdrRepository(dbPool) // Initialize CDR Repository
 	gatewayRepo := repository.NewPostgresGatewayRepository(dbPool)
 	rechargeRepo := repository.NewRechargeRepository(sqlxDB)
+	blacklistRepo := repository.NewBlacklistRepository(sqlxDB)
+	prefixRepo := repository.NewPrefixRepository(sqlxDB)
 	
 	// Initialize JWT service
 	var jwtService *auth.JWTService
@@ -186,9 +193,19 @@ func main() {
 	authService := service.NewPostgresAuthService(userRepo, systemRepo)
 	customerService := service.NewPostgresCustomerService(customerRepo, paymentRepo, systemRepo)
 	
+	// Initialize validation services
+	phoneValidator := validation.NewGooglePhoneValidator("US") // Default region
+	whatsappValidator := validation.NewPrivateWhatsAppValidator("") // API key not needed for private API
+	
+	// Initialize filter service
+	filterSvc := filterService.NewFilterService(blacklistRepo, prefixRepo, whatsappValidator, phoneValidator)
+	
 	// Initialize enterprise handlers
 	authHandlers := handlers.NewAuthHandlers(authService, customerService)
 	customerHandlers := handlers.NewCustomerHandlers(customerService)
+	
+	// Initialize filter handler
+	filterHandler := simhandler.NewFilterHandler(filterSvc)
 	
 	// Initialize analytics handler (only if cache is available)
 	var analyticsHandler *handlers.AnalyticsHandler
@@ -313,6 +330,10 @@ func main() {
 		router.GET("/api/analytics/spam", analyticsHandler.GetSpamAnalytics)
 		router.GET("/api/analytics/dashboard", analyticsHandler.GetDashboardData)
 	}
+	
+	// Filter API for OpenSIPS integration
+	apiV1 := router.Group("/api/v1")
+	filterHandler.RegisterRoutes(apiV1)
 
 	// CDR ticker endpoint - returns recent call records
 	router.GET("/api/cdr/recent", func(c *gin.Context) {

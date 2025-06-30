@@ -21,6 +21,10 @@ go.work
 bin/
 dist/
 build/
+libphonenumber/
+test_*
+!test_*.go
+server
 
 # IDE files
 .vscode/
